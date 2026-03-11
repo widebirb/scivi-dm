@@ -1,5 +1,6 @@
 import { useGeneration } from "./hooks/useGeneration";
 import ParameterControl from "./components/controls/ParameterControl";
+import CompositeCanvas from "./components/canvas/CompositeCanvas";
 
 export default function App() {
     const {
@@ -9,6 +10,7 @@ export default function App() {
         versions,
         setParameters,
         handleGenerate,
+        handleInpaint,
         rollback,
     } = useGeneration();
 
@@ -32,7 +34,12 @@ export default function App() {
 
             {/* Center — canvas */}
             <div className="flex-1 flex flex-col gap-3">
-                {/* put canvas here later ig */}
+                <CompositeCanvas
+                    key={activeVersion?.versionId}
+                    imageData={activeVersion?.imageData}
+                    onInpaint={handleInpaint}
+                    disabled={isLoading}
+                />
 
                 {/* Active version metadata */}
                 {activeVersion && (

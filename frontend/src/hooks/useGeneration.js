@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { generate } from "../api/client";
+import { generate, inpaint } from "../api/client";
 import { useVersions } from "./useVersions";
 
 export function useGeneration() {
@@ -28,6 +28,29 @@ export function useGeneration() {
         }
     }, [parameters, save]);
 
+    const handleInpaint = useCallback(async (imageData, maskData, inpaintParams) => {
+        if (!parameters?.prompt?.trim()) {
+            setError("Prompt is required.");
+            return;
+        }
+        if (!imageData || !maskData) {
+            setError("Image and mask are required for inpainting.");
+            return;
+        }
+
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const result = await inpaint(imageData, maskData, parameters, inpaintParams);
+            save(result);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [parameters, save]);
+
     return {
         // state
         parameters,
@@ -41,6 +64,7 @@ export function useGeneration() {
         // actions
         setParameters,
         handleGenerate,
+        handleInpaint,
         rollback,
         clear,
     };
