@@ -8,8 +8,42 @@ A facial composite generation system. Supports text-to-image generation, inpaint
 
 ```
 scivi-dm/
-  backend/       # FastAPI — inference API
-  frontend/      # React + Vite — UI
+  backend/
+    app/
+      models/
+        schemas.py          # Pydantic request/response models
+      services/
+        fake_inference.py   # Simulated inference (Phase 2)
+        image_processor.py  # Base64 utils, mask blur
+      routers/
+        generate.py         # POST /generate
+        inpaint.py          # POST /inpaint
+        health.py           # GET /health
+      main.py               # FastAPI app entry
+    requirements.txt
+    .env.example
+
+  frontend/
+    src/
+      api/
+        client.js           # Axios instance + endpoint functions
+      components/
+        controls/
+          ParameterControl.jsx    # Generation parameters UI
+          InpaintParameters.jsx   # Denoising strength + mask blur
+        canvas/
+          CompositeCanvas.jsx     # Image display + mask drawing
+        history/
+          VersionControl.jsx      # Generation history panel
+        StatusBar.jsx             # Backend health indicator
+        GeneratingOverlay.jsx     # Loading state over canvas
+      hooks/
+        useGeneration.js    # Core hook (params, API calls, saving)
+        useVersions.js      # React interface over version store
+        useHealth.js        # Backend status polling
+      store/
+        versionStore.js     # In-memory version history (singleton)
+      App.jsx
 ```
 
 ---
@@ -18,34 +52,10 @@ scivi-dm/
 
 | Layer     | Technology                        |
 |-----------|-----------------------------------|
-| Frontend  | React 19, Vite 5, Tailwind CSS 3  |
-| Canvas    | react-konva                       |
-| Backend   | FastAPI, Uvicorn                  |
+| Frontend  | React 18, Vite 5, Tailwind CSS 3  |
+| Canvas    | react-konva, use-image            |
+| Backend   | FastAPI, Uvicorn, Pillow          |
 | Models    | JuggernautXL (diffusers)          |
-| Deploy    | Vast.ai + Docker                  |
-
----
-
-## Current State
-
-### Done
-- FastAPI backend with fake inference endpoints
-  - `POST /generate` — text-to-image
-  - `POST /inpaint` — inpainting with mask
-  - `GET /health` — server + model status
-- Fake inference which simulates real response shape, timing, and seed simulation 
-- Mask dimension validation on inpaint endpoint
-- Frontend scaffolded (Vite + React 18 + Tailwind v3 + react-konva)
-- Frontend folder structure established
-
-### In Progress
-- React UI components (ParameterControl, CompositeCanvas, VersionControl)
-
-### Pending
-- Real JuggernautXL inference (Phase 3 — Vast.ai)
-- Inpainting pipeline integration
-- Dockerize + deployment
-- Model auto-download script
 
 ---
 
@@ -83,6 +93,11 @@ npm run dev
 ```
 
 UI runs at `http://localhost:5173`
+
+Create `frontend/.env`:
+```
+VITE_API_URL=http://localhost:8000
+```
 
 ---
 
@@ -131,12 +146,37 @@ UI runs at `http://localhost:5173`
 }
 ```
 
+---
+
+## Version Control
+
+No database. Each generation saves a JSON snapshot of:
+- Output image (base64), full parameters used, timestamp, parent version ID (tracks branching chain)
+---
+
+## Environment Variables
+
+**Backend** — copy `.env.example` to `.env` in `backend/`:
+
+```
+USE_FAKE_INFERENCE=true
+MODEL_PATH=/models
+```
+
+**Frontend** — create `.env` in `frontend/`:
+
+```
+VITE_API_URL=http://localhost:8000
+```
+
+---
+
 ## Roadmap
 
 ```
 Phase 1 — Colab inference testing         [ skipped for now ]
-Phase 2 — Fake backend + Full frontend    [ in progress ]
+Phase 2 — Fake backend + Full frontend    [ done ]
 Phase 3 — Real model integration (Vast)   [ pending ]
 Phase 4 — Containerize + Deploy           [ pending ]
-Extra    — Prompt builder, serverless      [ if time allows ]
+Extra   — Prompt builder, serverless      [ if motivated ]
 ```
