@@ -4,6 +4,7 @@ import ParameterControl from "./components/controls/ParameterControl";
 import InpaintParameters from "./components/controls/InpaintParameters";
 import CompositeCanvas from "./components/canvas/CompositeCanvas";
 import VersionControl from "./components/history/VersionControl";
+import StatusBar from "./components/StatusBar";
 
 export default function App() {
     const {
@@ -43,7 +44,7 @@ export default function App() {
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
         >
 
-            {/* ── Left panel ── */}
+            {/*Left panel*/}
             <aside className="w-72 shrink-0 flex flex-col border-r border-zinc-800 overflow-y-auto">
 
                 {/* Header */}
@@ -52,6 +53,7 @@ export default function App() {
                         <h1 className="text-sm font-semibold tracking-widest uppercase text-zinc-100">scivi-dm</h1>
                         <p className="text-zinc-600 text-xs mt-0.5">facial composite generation</p>
                     </div>
+                    <StatusBar />
                 </div>
 
                 {/* Tab switcher */}
@@ -98,7 +100,7 @@ export default function App() {
                 </div>
             </aside>
 
-            {/* ── Center — canvas ── */}
+            {/*Center (canvas)*/}
             <main className="flex-1 flex flex-col items-center justify-center p-8 gap-4 overflow-hidden">
 
                 {activeVersion && (
@@ -122,7 +124,7 @@ export default function App() {
                 </div>
             </main>
 
-            {/* ── Right panel — history ── */}
+            {/*Right panel (history)*/}
             <aside className="w-56 shrink-0 border-l border-zinc-800 flex flex-col overflow-y-auto p-4">
                 <VersionControl
                     versions={versions}
