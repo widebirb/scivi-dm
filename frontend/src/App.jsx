@@ -115,6 +115,7 @@ export default function App() {
 
                 {/* Canvas wrapped in relative container for overlay positioning */}
                 <div className="relative">
+                    <GeneratingOverlay visible={isLoading} elapsed={elapsed} />
                     <CompositeCanvas
                         key={activeVersion?.versionId}
                         imageData={activeVersion?.imageData}
