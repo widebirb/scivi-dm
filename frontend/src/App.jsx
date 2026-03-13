@@ -4,6 +4,7 @@ import ParameterControl from "./components/controls/ParameterControl";
 import InpaintParameters from "./components/controls/InpaintParameters";
 import CompositeCanvas from "./components/canvas/CompositeCanvas";
 import VersionControl from "./components/history/VersionControl";
+import GeneratingOverlay from "./components/StatusBar";
 import StatusBar from "./components/StatusBar";
 
 export default function App() {
@@ -45,7 +46,7 @@ export default function App() {
         >
 
             {/*Left panel*/}
-            <aside className="w-72 shrink-0 flex flex-col border-r border-zinc-800 overflow-y-auto">
+            <aside className="w-74 shrink-0 flex flex-col border-r border-zinc-800 overflow-y-auto">
 
                 {/* Header */}
                 <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
@@ -94,7 +95,7 @@ export default function App() {
                     )}
                     {tab === "inpaint" && (
                         <p className="text-zinc-600 text-xs font-mono text-center">
-                            draw mask on canvas then click inpaint selection
+                            draw on canvas then click inpaint selection
                         </p>
                     )}
                 </div>
