@@ -1,0 +1,39 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - USE_FAKE_INFERENCE=false
+      - MODEL_PATH=/models
+      - INPAINT_MODEL_PATH=/models/juggernaut-xl-inpainting.safetensors
+      - FRONTEND_URL=http://localhost:5173
+    volumes:
+      # Mount models directory from host so they persist across container restarts.
+      # On Vast.ai this will be /workspace/models:/models
+      # Locally you can point this anywhere you have the models stored.
+      - /workspace/models:/models
+      # HuggingFace cache so the base model isn't re-downloaded on every build
+      - /workspace/hf_cache:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
