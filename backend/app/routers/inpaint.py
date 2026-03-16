@@ -1,20 +1,17 @@
-import os
 from fastapi import APIRouter, HTTPException
 from app.models.schemas import InpaintRequest, GenerationResponse
-from app.services.image_processor import decode_base64_image, validate_mask_dimensions
-
-USE_FAKE = os.getenv("USE_FAKE_INFERENCE", "true").lower() == "true"
-
-if USE_FAKE:
-    from app.services.fake_inference import fake_inpaint as _inpaint
-else:
-    from app.services.real_inference import real_inpaint as _inpaint
+from app.services.fake_inference import fake_inpaint
+from app.services.image_processor import (
+    decode_base64_image,
+    validate_mask_dimensions,
+)
 
 router = APIRouter(prefix="/inpaint", tags=["inpainting"])
 
 
 @router.post("", response_model=GenerationResponse)
 async def inpaint(request: InpaintRequest):
+    # Validate mask/image dimensions match before doing anything else
     try:
         image = decode_base64_image(request.image)
         mask = decode_base64_image(request.mask)
@@ -28,7 +25,7 @@ async def inpaint(request: InpaintRequest):
         )
 
     try:
-        result = await _inpaint(
+        result = await fake_inpaint(
             image_b64=request.image,
             mask_b64=request.mask,
             params=request.parameters,
