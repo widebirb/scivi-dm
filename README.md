@@ -77,6 +77,7 @@ source .venv/bin/activate
 
 pip install -r requirements.txt
 uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
 ```
 
 API runs at `http://localhost:8000`
