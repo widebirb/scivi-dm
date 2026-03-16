@@ -3,3 +3,13 @@ uvicorn[standard]==0.30.6
 pillow==10.4.0
 python-dotenv==1.0.1
 pydantic==2.9.2
+
+# Real inference dependencies only instal in the container, not local dev
+torch==2.4.0
+diffusers==0.30.3
+transformers==4.44.2
+accelerate==0.34.2
+safetensors==0.4.4
+huggingface_hub==0.24.6
+requests==2.32.3
+ 
