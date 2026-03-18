@@ -1,3 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Base tokens */
+:root {
+    --font-mono: 'IBM Plex Mono', 'JetBrains Mono', monospace;
+    --bg: #09090b;
+    --bg-surface: #18181b;
+    --bg-raised: #27272a;
+    --border: #3f3f46;
+    --border-dim: #27272a;
+    --text: #fafafa;
+    --text-dim: #a1a1aa;
+    --text-muted: #52525b;
+}
+
+/* Colored theme */
+[data-theme="colored"] {
+    --accent: #56257E;
+    --accent-hover: #6b2f9e;
+    --accent-dim: #56257e33;
+    --accent-text: #c084fc;
+    --accent2: #087D39;
+    --accent2-hover: #0a9e47;
+    --accent2-dim: #087d3933;
+    --accent2-text: #4ade80;
+    --generate-bg: #56257E;
+    --generate-hover: #6b2f9e;
+    --generate-text: #fafafa;
+    --status-up: #087D39;
+    --composite-filter: none;
+}
+
+/* Mono theme */
+[data-theme="mono"] {
+    --accent: #52525b;
+    --accent-hover: #71717a;
+    --accent-dim: #52525b33;
+    --accent-text: #d4d4d8;
+    --accent2: #3f3f46;
+    --accent2-hover: #52525b;
+    --accent2-dim: #3f3f4633;
+    --accent2-text: #a1a1aa;
+    --generate-bg: #fafafa;
+    --generate-hover: #ffffff;
+    --generate-text: #09090b;
+    --status-up: #71717a;
+    --composite-filter: grayscale(100%);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-dim);
+    border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--border);
+}
+
+.composite-image {
+    filter: var(--composite-filter);
+    transition: filter 0.3s ease;
+}
+
+.btn-generate {
+    background-color: var(--generate-bg);
+    color: var(--generate-text);
+    transition: background-color 0.15s ease;
+}
+
+.btn-generate:hover:not(:disabled) {
+    background-color: var(--generate-hover);
+}
+
+.btn-generate:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.tooltip-wrap {
+    position: relative;
+}
+
+.tooltip-wrap .tooltip-box {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.65rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 50;
+}
+
+.tooltip-wrap:hover .tooltip-box {
+    visibility: visible;
+    opacity: 1;
+}
+
+.scanlines {
+    position: relative;
+}
+
+.scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.03) 2px, rgba(0, 0, 0, 0.03) 4px);
+    pointer-events: none;
+}
