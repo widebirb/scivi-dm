@@ -2,21 +2,27 @@ export default function GeneratingOverlay({ visible, elapsed = 0 }) {
     if (!visible) return null;
 
     return (
-        <div className="absolute inset-0 bg-zinc-950/80 flex flex-col items-center justify-center gap-3 rounded-lg z-10">
-
-            {/* Pulsing bar */}
-            <div className="w-32 h-0.5 bg-zinc-800 rounded overflow-hidden">
+        <div
+            className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded z-10"
+            style={{ backgroundColor: "rgba(9,9,11,0.85)" }}
+        >
+            <div
+                className="w-32 h-px rounded overflow-hidden"
+                style={{ backgroundColor: "var(--bg-raised)" }}
+            >
                 <div
-                    className="h-full bg-zinc-400 rounded"
+                    className="h-full rounded"
                     style={{
+                        backgroundColor: "var(--accent)",
                         animation: "slide 1.4s ease-in-out infinite",
                     }}
                 />
             </div>
 
-            <p className="font-mono text-xs text-zinc-400">generating</p>
-            <p className="font-mono text-xs text-zinc-600">{elapsed}s</p>
-
+            <p className="text-xs uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>
+                generating
+            </p>
+            <p className="text-xs" style={{ color: "var(--text-muted)" }}>{elapsed}s</p>
 
             {/*idek this was possible*/}
             <style>{`
