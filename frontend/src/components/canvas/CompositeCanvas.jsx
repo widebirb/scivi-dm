@@ -1,48 +1,39 @@
-import { useRef, useState, useEffect, useCallback } from "react"; // useEffect kept for keyboard listener
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Stage, Layer, Image as KonvaImage, Line, Rect } from "react-konva";
 import useImage from "use-image";
+import InpaintParameters from "../controls/InpaintParameters";
 
-const CANVAS_SIZE = 512; // display size in px, independent of actual image resolution
+const CANVAS_SIZE = 512;
 const MIN_BRUSH = 4;
 const MAX_BRUSH = 80;
 
+const INPAINT_DEFAULTS = { denoising_strength: 0.75, mask_blur: 4 };
+
 export default function CompositeCanvas({ imageData, onInpaint, disabled = false }) {
     const stageRef = useRef(null);
-    const maskLayerRef = useRef(null);
     const imageLayerRef = useRef(null);
+    const maskLayerRef = useRef(null);
 
-    const [tool, setTool] = useState("paint"); // "paint" | "erase"
+    const [tool, setTool] = useState("paint");
     const [brushSize, setBrushSize] = useState(20);
     const [isDrawing, setIsDrawing] = useState(false);
     const [lines, setLines] = useState([]);
     const [hasMask, setHasMask] = useState(false);
+    const [inpaintOpen, setInpaintOpen] = useState(false);
+    const [inpaintParams, setInpaintParams] = useState(INPAINT_DEFAULTS);
 
     const [konvaImage] = useImage(imageData || "");
 
-    // [ and ] keys for brush size — Photoshop muscle memory
-    useEffect(() => {
-        function onKeyDown(e) {
-            if (e.key === "[") setBrushSize((s) => Math.max(MIN_BRUSH, s - 4));
-            if (e.key === "]") setBrushSize((s) => Math.min(MAX_BRUSH, s + 4));
-        }
-        window.addEventListener("keydown", onKeyDown);
-        return () => window.removeEventListener("keydown", onKeyDown);
-    }, []);
 
     function getPointerPos() {
-        const stage = stageRef.current;
-        const pos = stage.getPointerPosition();
-        return pos;
+        return stageRef.current.getPointerPosition();
     }
 
     function handleMouseDown() {
         if (!imageData || disabled) return;
         setIsDrawing(true);
         const pos = getPointerPos();
-        setLines((prev) => [
-            ...prev,
-            { tool, brushSize, points: [pos.x, pos.y] },
-        ]);
+        setLines((prev) => [...prev, { tool, brushSize, points: [pos.x, pos.y] }]);
     }
 
     function handleMouseMove() {
@@ -58,56 +49,48 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
         setHasMask(true);
     }
 
-    function handleMouseUp() {
-        setIsDrawing(false);
-    }
+    function handleMouseUp() { setIsDrawing(false); }
 
-    function clearMask() {
-        setLines([]);
-        setHasMask(false);
-    }
+    function clearMask() { setLines([]); setHasMask(false); }
 
     const exportMask = useCallback(() => {
         const stage = stageRef.current;
         if (!stage) return null;
-
-        // Hide image, reveal black bg
         imageLayerRef.current.hide();
-        const dataURL = stage.toDataURL({
-            mimeType: "image/png",
-            pixelRatio: 1,
-        });
+        const dataURL = stage.toDataURL({ mimeType: "image/png", pixelRatio: 1 });
         imageLayerRef.current.show();
-
         return dataURL;
     }, []);
 
-    async function handleInpaintSubmit() {
+    function handleInpaintSubmit() {
         if (!hasMask) return;
         const maskDataURL = exportMask();
         if (!maskDataURL) return;
-        onInpaint?.(imageData, maskDataURL);
+        onInpaint?.(imageData, maskDataURL, inpaintParams);
     }
 
     const cursor = tool === "paint" ? "crosshair" : "cell";
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
 
             {/* Toolbar */}
-            <div className="flex items-center gap-3 font-mono text-xs">
-
+            <div
+                className="flex items-center gap-3 px-2 py-1.5 rounded text-xs"
+                style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-dim)" }}
+            >
                 {/* Tool toggle */}
-                <div className="flex border border-zinc-700 rounded overflow-hidden">
+                <div className="flex rounded overflow-hidden" style={{ border: "1px solid var(--border)" }}>
                     {["paint", "erase"].map((t) => (
                         <button
                             key={t}
                             onClick={() => setTool(t)}
                             disabled={disabled}
-                            className={`px-3 py-1.5 transition-colors disabled:opacity-40 ${tool === t
-                                ? "bg-zinc-100 text-zinc-900"
-                                : "bg-zinc-900 text-zinc-400 hover:text-zinc-100"
-                                }`}
+                            className="px-3 py-1 text-xs transition-colors disabled:opacity-40"
+                            style={{
+                                backgroundColor: tool === t ? "var(--accent)" : "var(--bg-raised)",
+                                color: tool === t ? "var(--generate-text)" : "var(--text-dim)",
+                            }}
                         >
                             {t}
                         </button>
@@ -116,26 +99,26 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
 
                 {/* Brush size */}
                 <div className="flex items-center gap-2 flex-1">
-                    <span className="text-zinc-500">brush</span>
+                    <span style={{ color: "var(--text-muted)" }}>brush</span>
                     <input
-                        type="range"
-                        min={MIN_BRUSH}
-                        max={MAX_BRUSH}
+                        type="range" min={MIN_BRUSH} max={MAX_BRUSH}
                         value={brushSize}
                         onChange={(e) => setBrushSize(Number(e.target.value))}
                         disabled={disabled}
-                        className="flex-1 accent-zinc-400 disabled:opacity-40"
+                        className="flex-1 disabled:opacity-40"
+                        style={{ accentColor: "var(--accent)" }}
                     />
-                    <span className="text-zinc-400 w-6 text-right">{brushSize}</span>
+                    <span className="w-6 text-right" style={{ color: "var(--text-dim)" }}>{brushSize}</span>
                 </div>
 
-                <span className="text-zinc-700">[ ]</span>
-
-                {/* Clear */}
+                {/* Clear mask */}
                 <button
                     onClick={clearMask}
                     disabled={disabled || !hasMask}
-                    className="text-zinc-500 hover:text-red-400 transition-colors disabled:opacity-30"
+                    className="text-xs transition-colors disabled:opacity-30"
+                    style={{ color: "var(--text-muted)" }}
+                    onMouseEnter={(e) => e.target.style.color = "#f87171"}
+                    onMouseLeave={(e) => e.target.style.color = "var(--text-muted)"}
                 >
                     clear
                 </button>
@@ -143,8 +126,13 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
 
             {/* Stage */}
             <div
-                className="border border-zinc-700 rounded-lg overflow-hidden"
-                style={{ cursor, width: CANVAS_SIZE, height: CANVAS_SIZE }}
+                className="rounded overflow-hidden scanlines"
+                style={{
+                    cursor,
+                    width: CANVAS_SIZE,
+                    height: CANVAS_SIZE,
+                    border: "1px solid var(--border)",
+                }}
             >
                 <Stage
                     ref={stageRef}
@@ -156,57 +144,81 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
                     onMouseLeave={handleMouseUp}
                     style={{ background: "#000" }}
                 >
-                    {/* Layer 1 — image */}
                     <Layer ref={imageLayerRef}>
-                        {konvaImage && (
-                            <KonvaImage
-                                image={konvaImage}
-                                width={CANVAS_SIZE}
-                                height={CANVAS_SIZE}
-                            />
-                        )}
-                        {!konvaImage && (
-                            // Black fill for mask export background
+                        {konvaImage ? (
+                            <KonvaImage image={konvaImage} width={CANVAS_SIZE} height={CANVAS_SIZE} className="composite-image" />
+                        ) : (
                             <Rect width={CANVAS_SIZE} height={CANVAS_SIZE} fill="#000" />
                         )}
                     </Layer>
 
-                    {/* Layer 2 — mask strokes */}
                     <Layer ref={maskLayerRef}>
-                        {/* Black fill ensures mask background is solid for export */}
                         <Rect width={CANVAS_SIZE} height={CANVAS_SIZE} fill="transparent" />
-
                         {lines.map((line, i) => (
                             <Line
                                 key={i}
                                 points={line.points}
-                                stroke={line.tool === "paint" ? "rgba(255,60,60,0.55)" : "black"}
+                                stroke={line.tool === "paint" ? "rgba(86,37,126,0.6)" : "black"}
                                 strokeWidth={line.brushSize}
                                 tension={0.4}
                                 lineCap="round"
                                 lineJoin="round"
-                                globalCompositeOperation={
-                                    line.tool === "erase" ? "destination-out" : "source-over"
-                                }
+                                globalCompositeOperation={line.tool === "erase" ? "destination-out" : "source-over"}
                             />
                         ))}
                     </Layer>
                 </Stage>
             </div>
 
-            {/* Inpaint submit */}
+            {/* Inpaint options*/}
             {imageData && (
-                <button
-                    onClick={handleInpaintSubmit}
-                    disabled={disabled || !hasMask}
-                    className="w-full py-2 border border-zinc-600 text-zinc-300 rounded font-mono text-sm hover:border-zinc-400 hover:text-zinc-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                <div
+                    className="rounded text-xs"
+                    style={{ border: "1px solid var(--border-dim)", backgroundColor: "var(--bg-surface)" }}
                 >
-                    {disabled ? "generating..." : "inpaint selection"}
-                </button>
+                    {/* Collapsible header */}
+                    <button
+                        onClick={() => setInpaintOpen((o) => !o)}
+                        className="w-full flex items-center justify-between px-3 py-2 transition-colors"
+                        style={{ color: "var(--text-dim)" }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = "var(--text)"}
+                        onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-dim)"}
+                    >
+                        <span className="uppercase tracking-wider">Inpaint Options</span>
+                        <span
+                            className="px-1 py-1 rounded text-xs mr-1"
+                            style={{ backgroundColor: "var(--bg-raised)", color: "var(--text-dim)" }}
+                        >{inpaintOpen ? "close" : "open"}</span>
+                    </button>
+
+                    {inpaintOpen && (
+                        <div className="px-3 pb-3 border-t" style={{ borderColor: "var(--border-dim)" }}>
+                            <div className="pt-3">
+                                <InpaintParameters onChange={setInpaintParams} disabled={disabled} />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Submit */}
+                    <div className="px-3 pb-3">
+                        <button
+                            onClick={handleInpaintSubmit}
+                            disabled={disabled || !hasMask}
+                            className="w-full py-2 rounded text-xs transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                            style={{
+                                border: "1px solid var(--accent)",
+                                color: "var(--accent-text)",
+                                backgroundColor: hasMask && !disabled ? "var(--accent-dim)" : "transparent",
+                            }}
+                        >
+                            {disabled ? "generating..." : hasMask ? "inpaint selection" : "draw a mask first"}
+                        </button>
+                    </div>
+                </div>
             )}
 
             {!imageData && (
-                <p className="text-zinc-700 font-mono text-xs text-center">
+                <p className="text-xs text-center" style={{ color: "var(--text-muted)" }}>
                     generate an image first to enable inpainting
                 </p>
             )}

@@ -3,116 +3,117 @@ import { useState } from "react";
 export default function VersionControl({ versions, activeVersion, onRollback, onClear }) {
     const [expandedId, setExpandedId] = useState(null);
 
-    function toggleExpand(versionId) {
-        setExpandedId((prev) => (prev === versionId ? null : versionId));
-    }
-
-    if (versions.length === 0) {
-        return (
-            <div className="flex flex-col gap-2">
-                <Header onClear={onClear} hasVersions={false} />
-                <p className="text-zinc-700 font-mono text-xs">no history yet</p>
-            </div>
-        );
+    function toggleExpand(id) {
+        setExpandedId((prev) => (prev === id ? null : id));
     }
 
     return (
-        <div className="flex flex-col gap-2">
-            <Header onClear={onClear} hasVersions={versions.length > 0} />
+        <div className="flex flex-col gap-2 h-full">
 
-            <div className="flex flex-col gap-1.5 overflow-y-auto max-h-[70vh] pr-1">
-                {[...versions].reverse().map((v) => {
-                    const isActive = activeVersion?.versionId === v.versionId;
-                    const isExpanded = expandedId === v.versionId;
+            {/* Header */}
+            <div className="flex items-center justify-between shrink-0">
+                <span className="text-xs uppercase tracking-[0.15em]" style={{ color: "var(--text-muted)" }}>
+                    History
+                </span>
+                {versions.length > 0 && (
+                    <button
+                        onClick={onClear}
+                        className="text-xs transition-colors"
+                        style={{ color: "var(--text-muted)" }}
+                        onMouseEnter={(e) => e.target.style.color = "#f87171"}
+                        onMouseLeave={(e) => e.target.style.color = "var(--text-muted)"}
+                    >
+                        clear
+                    </button>
+                )}
+            </div>
 
-                    return (
-                        <div
-                            key={v.versionId}
-                            className={`rounded border transition-colors ${isActive
-                                ? "border-zinc-400 bg-zinc-800"
-                                : "border-zinc-700 bg-zinc-900 hover:border-zinc-600"
-                                }`}
-                        >
-                            {/* Main row */}
-                            <div className="flex gap-2 p-2">
-                                {/* Thumbnail */}
-                                <button
-                                    onClick={() => onRollback?.(v.versionId)}
-                                    className="shrink-0"
-                                    title="load this version"
-                                >
-                                    <img
-                                        src={v.imageData}
-                                        alt={v.label}
-                                        className="w-12 h-12 object-cover rounded border border-zinc-700"
-                                    />
-                                </button>
+            {/* Divider */}
+            <div className="h-px shrink-0" style={{ backgroundColor: "var(--border-dim)" }} />
 
-                                {/* Info */}
-                                <button
-                                    onClick={() => onRollback?.(v.versionId)}
-                                    className="flex-1 text-left min-w-0"
-                                >
-                                    <p className={`text-xs font-mono truncate ${isActive ? "text-zinc-100" : "text-zinc-300"}`}>
-                                        {v.label}
-                                    </p>
-                                    <p className="text-zinc-600 text-xs font-mono">
-                                        {new Date(v.timestamp).toLocaleTimeString()}
-                                    </p>
-                                    <p className="text-zinc-600 text-xs font-mono">
-                                        seed {v.parameters.seed}
-                                    </p>
-                                </button>
+            {/* List */}
+            {versions.length === 0 ? (
+                <p className="text-xs" style={{ color: "var(--text-muted)" }}>no history yet</p>
+            ) : (
+                <div className="flex flex-col gap-1.5 overflow-y-auto flex-1 pr-0.5">
+                    {[...versions].reverse().map((v) => {
+                        const isActive = activeVersion?.versionId === v.versionId;
+                        const isExpanded = expandedId === v.versionId;
 
-                                {/* Expand toggle */}
-                                <button
-                                    onClick={() => toggleExpand(v.versionId)}
-                                    className="text-zinc-600 hover:text-zinc-400 text-xs font-mono self-start pt-0.5 transition-colors"
-                                    title="show parameters"
-                                >
-                                    {isExpanded ? "▲" : "▼"}
-                                </button>
-                            </div>
+                        return (
+                            <div
+                                key={v.versionId}
+                                className="rounded transition-colors"
+                                style={{
+                                    border: `1px solid ${isActive ? "var(--accent)" : "var(--border-dim)"}`,
+                                    backgroundColor: isActive ? "var(--accent-dim)" : "var(--bg-surface)",
+                                }}
+                            >
+                                {/* Main row */}
+                                <div className="flex gap-2 p-2">
+                                    <button onClick={() => onRollback?.(v.versionId)} className="shrink-0">
+                                        <img
+                                            src={v.imageData}
+                                            alt={v.label}
+                                            className="w-10 h-10 object-cover rounded composite-image"
+                                            style={{ border: "1px solid var(--border-dim)" }}
+                                        />
+                                    </button>
 
-                            {/* Expanded parameters */}
-                            {isExpanded && (
-                                <div className="px-2 pb-2 border-t border-zinc-700 pt-2 font-mono text-xs text-zinc-500 space-y-0.5">
-                                    <p><span className="text-zinc-600">prompt</span> {v.parameters.prompt || "—"}</p>
-                                    {v.parameters.negative_prompt && (
-                                        <p><span className="text-zinc-600">neg</span> {v.parameters.negative_prompt}</p>
-                                    )}
-                                    <p>
-                                        <span className="text-zinc-600">res</span> {v.parameters.width}×{v.parameters.height}
-                                        {" · "}
-                                        <span className="text-zinc-600">steps</span> {v.parameters.steps}
-                                        {" · "}
-                                        <span className="text-zinc-600">cfg</span> {v.parameters.cfg_scale}
-                                    </p>
-                                    <p><span className="text-zinc-600">sampler</span> {v.parameters.sampler}</p>
-                                    {v.parentId && (
-                                        <p className="text-zinc-700">branched from previous</p>
-                                    )}
+                                    <button
+                                        onClick={() => onRollback?.(v.versionId)}
+                                        className="flex-1 text-left min-w-0"
+                                    >
+                                        <p
+                                            className="text-xs truncate"
+                                            style={{ color: isActive ? "var(--accent-text)" : "var(--text-dim)" }}
+                                        >
+                                            {v.label}
+                                        </p>
+                                        <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                                            {new Date(v.timestamp).toLocaleTimeString()}
+                                        </p>
+                                    </button>
+
+                                    <button
+                                        onClick={() => toggleExpand(v.versionId)}
+                                        className="text-xs self-start pt-0.5 transition-colors"
+                                        style={{ color: "var(--text-muted)" }}
+                                        onMouseEnter={(e) => e.target.style.color = "var(--text-dim)"}
+                                        onMouseLeave={(e) => e.target.style.color = "var(--text-muted)"}
+                                    >
+                                        {isExpanded ? "▲" : "▼"}
+                                    </button>
                                 </div>
-                            )}
-                        </div>
-                    );
-                })}
-            </div>
-        </div>
-    );
-}
 
-function Header({ onClear, hasVersions }) {
-    return (
-        <div className="flex items-center justify-between">
-            <span className="text-xs uppercase tracking-widest text-zinc-500 font-mono">History</span>
-            {hasVersions && (
-                <button
-                    onClick={onClear}
-                    className="text-xs font-mono text-zinc-600 hover:text-red-400 transition-colors"
-                >
-                    clear all
-                </button>
+                                {/* Expanded params */}
+                                {isExpanded && (
+                                    <div
+                                        className="px-2 pb-2 pt-2 text-xs space-y-0.5 border-t"
+                                        style={{ borderColor: "var(--border-dim)", color: "var(--text-muted)" }}
+                                    >
+                                        <p><span style={{ color: "var(--text-muted)" }}>prompt </span>
+                                            <span style={{ color: "var(--text-dim)" }}>{v.parameters.prompt || "—"}</span>
+                                        </p>
+                                        <p>
+                                            <span style={{ color: "var(--text-muted)" }}>seed </span>
+                                            <span style={{ color: "var(--accent-text)" }}>{v.parameters.seed}</span>
+                                        </p>
+                                        <p>
+                                            {v.parameters.width}×{v.parameters.height}
+                                            {" · "}steps {v.parameters.steps}
+                                            {" · "}cfg {v.parameters.cfg_scale}
+                                        </p>
+                                        <p style={{ color: "var(--text-muted)" }}>{v.parameters.sampler}</p>
+                                        {v.parentId && (
+                                            <p style={{ color: "var(--text-muted)" }}>↳ branched</p>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
             )}
         </div>
     );
