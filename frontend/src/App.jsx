@@ -6,6 +6,8 @@ import VersionControl from "./components/history/VersionControl";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import GeneratingOverlay from "./components/GeneratingOverlay";
+import GuidePage from "./pages/GuidePage";
+import AboutPage from "./pages/AboutPage";
 
 export default function App() {
     const {
@@ -47,7 +49,7 @@ export default function App() {
 
                     {/*Left sidebar*/}
                     <aside
-                        className="w-64 shrink-0 flex flex-col overflow-y-auto border-r"
+                        className="w-72 shrink-0 flex flex-col overflow-y-auto border-r"
                         style={{ borderColor: "var(--border-dim)", backgroundColor: "var(--bg-surface)" }}
                     >
                         <div className="flex-1 p-4">
