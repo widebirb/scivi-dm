@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
 import { useGeneration } from "./hooks/useGeneration";
 import ParameterControl from "./components/controls/ParameterControl";
-import InpaintParameters from "./components/controls/InpaintParameters";
 import CompositeCanvas from "./components/canvas/CompositeCanvas";
 import VersionControl from "./components/history/VersionControl";
-import GeneratingOverlay from "./components/StatusBar";
-import StatusBar from "./components/StatusBar";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import GeneratingOverlay from "./components/GeneratingOverlay";
 
 export default function App() {
     const {
@@ -22,15 +20,9 @@ export default function App() {
         clear,
     } = useGeneration();
 
-    const [inpaintParams, setInpaintParams] = useState({
-        denoising_strength: 0.75,
-        mask_blur: 4,
-    });
-
-    const [tab, setTab] = useState("generate");
     const [page, setPage] = useState(null); // null = workspace, "guide", "about"
 
-    // counts up while isLoading is true
+    // Elapsed timer
     const [elapsed, setElapsed] = useState(0);
     useEffect(() => {
         if (!isLoading) return;
@@ -38,77 +30,86 @@ export default function App() {
         return () => { clearInterval(interval); setElapsed(0); };
     }, [isLoading]);
 
-    function onInpaint(imageData, maskData) {
-        handleInpaint(imageData, maskData, inpaintParams);
-    }
-
     return (
         <div
             className="h-screen flex flex-col overflow-hidden"
-            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+            style={{ fontFamily: "var(--font-mono)", backgroundColor: "var(--bg)" }}
         >
-
             <Header onNavigate={setPage} currentPage={page} />
 
-            {/*  Page routing */}
+            {/*Page routing*/}
             {page === "guide" && <GuidePage />}
             {page === "about" && <AboutPage />}
 
-
-            {/* Main */}
+            {/*Main workspace*/}
             {page === null && (
-                <div className="flex flex-1 overflow-auto">
+                <div className="flex flex-1 overflow-hidden">
 
-                    {/*Left panel*/}
-                    <aside className="w-74 shrink-0 flex flex-col border-r border-zinc-800 overflow-y-auto">
+                    {/*Left sidebar*/}
+                    <aside
+                        className="w-64 shrink-0 flex flex-col overflow-y-auto border-r"
+                        style={{ borderColor: "var(--border-dim)", backgroundColor: "var(--bg-surface)" }}
+                    >
+                        <div className="flex-1 p-4">
+                            <ParameterControl onChange={setParameters} disabled={isLoading} />
+                        </div>
 
-                        {/* Generate button pinned to bottom */}
-                        <div className="p-4 border-t border-zinc-800 flex flex-col gap-2">
-                            {error && <p className="text-red-400 text-xs font-mono">{error}</p>}
-                            {tab === "generate" && (
-                                <button
-                                    onClick={handleGenerate}
-                                    disabled={isLoading}
-                                    className="w-full py-2.5 bg-zinc-100 text-zinc-900 rounded font-mono text-sm font-semibold hover:bg-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                                >
-                                    {isLoading ? `generating... ${elapsed}s` : "generate"}
-                                </button>
+                        {/* Generate button */}
+                        <div
+                            className="p-4 border-t flex flex-col gap-2 shrink-0"
+                            style={{ borderColor: "var(--border-dim)" }}
+                        >
+                            {error && (
+                                <p className="text-xs" style={{ color: "#f87171" }}>{error}</p>
                             )}
-                            {tab === "inpaint" && (
-                                <p className="text-zinc-600 text-xs font-mono text-center">
-                                    draw on canvas then click inpaint selection
-                                </p>
-                            )}
+                            <button
+                                onClick={handleGenerate}
+                                disabled={isLoading}
+                                className="w-full py-2.5 rounded text-sm font-semibold uppercase tracking-wider btn-generate"
+                            >
+                                {isLoading ? `generating... ${elapsed}s` : "generate"}
+                            </button>
                         </div>
                     </aside>
 
-                    {/*Center (canvas)*/}
-                    <main className="flex-1 flex flex-col items-center justify-center p-8 gap-4 overflow-hidden">
-
+                    {/* Center (canvas)*/}
+                    <main
+                        className="flex-1 flex flex-col items-center justify-center p-6 overflow-auto gap-3"
+                        style={{ backgroundColor: "var(--bg)" }}
+                    >
+                        {/* Metadata */}
                         {activeVersion && (
-                            <div className="w-full max-w-xl flex gap-4 font-mono text-xs text-zinc-500 border-b border-zinc-800 pb-3">
-                                <span><span className="text-zinc-600">seed</span> {activeVersion.parameters.seed}</span>
-                                <span><span className="text-zinc-600">steps</span> {activeVersion.parameters.steps}</span>
-                                <span><span className="text-zinc-600">cfg</span> {activeVersion.parameters.cfg_scale}</span>
-                                <span><span className="text-zinc-600">sampler</span> {activeVersion.parameters.sampler}</span>
+                            <div
+                                className="w-full max-w-xl flex gap-4 text-xs pb-3"
+                                style={{
+                                    borderBottom: "1px solid var(--border-dim)",
+                                    color: "var(--text-muted)",
+                                }}
+                            >
+                                <span>seed <span style={{ color: "var(--accent-text)" }}>{activeVersion.parameters.seed}</span></span>
+                                <span>steps {activeVersion.parameters.steps}</span>
+                                <span>cfg {activeVersion.parameters.cfg_scale}</span>
+                                <span className="truncate">{activeVersion.parameters.sampler}</span>
                                 <span className="ml-auto">{activeVersion.parameters.width}×{activeVersion.parameters.height}</span>
                             </div>
                         )}
 
-                        {/* Canvas wrapped in relative container for overlay positioning */}
                         <div className="relative">
                             <GeneratingOverlay visible={isLoading} elapsed={elapsed} />
                             <CompositeCanvas
                                 key={activeVersion?.versionId}
                                 imageData={activeVersion?.imageData}
-                                onInpaint={onInpaint}
+                                onInpaint={handleInpaint}
                                 disabled={isLoading}
                             />
                         </div>
                     </main>
 
-                    {/*Right panel (history)*/}
-                    <aside className="w-56 shrink-0 border-l border-zinc-800 flex flex-col overflow-y-auto p-4">
+                    {/* Right sidebar (history)*/}
+                    <aside
+                        className="w-52 shrink-0 flex flex-col overflow-hidden border-l p-3"
+                        style={{ borderColor: "var(--border-dim)", backgroundColor: "var(--bg-surface)" }}
+                    >
                         <VersionControl
                             versions={versions}
                             activeVersion={activeVersion}
@@ -120,8 +121,6 @@ export default function App() {
             )}
 
             <Footer />
-
-
         </div>
     );
 }

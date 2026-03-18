@@ -8,7 +8,6 @@ const SAMPLERS = [
     "DDIM",
 ];
 
-//presets
 const RESOLUTIONS = [
     { label: "512 × 512", width: 512, height: 512 },
     { label: "768 × 768", width: 768, height: 768 },
@@ -16,7 +15,6 @@ const RESOLUTIONS = [
     { label: "768 × 512", width: 768, height: 512 },
     { label: "1024 × 1024", width: 1024, height: 1024 },
 ];
-
 
 const DEFAULTS = {
     prompt: "",
@@ -27,6 +25,16 @@ const DEFAULTS = {
     steps: 20,
     cfg_scale: 7,
     seed: -1,
+};
+
+const TOOLTIPS = {
+    prompt: "Describe what to generate. More detail = more accurate results.",
+    negative_prompt: "Describe what to avoid or exclude from the output.",
+    resolution: "Output image dimensions. Higher = slower and more VRAM.",
+    sampler: "Algorithm used for denoising. DPM++ 2M Karras is a safe default.",
+    steps: "More steps = more refined output, but slower. 20–30 is usually enough.",
+    cfg_scale: "How strictly the model follows your prompt. Higher = more literal.",
+    seed: "Controls randomness. Same seed + same params = same image. -1 = random.",
 };
 
 export default function ParameterControl({ onChange, disabled = false }) {
@@ -51,141 +59,191 @@ export default function ParameterControl({ onChange, disabled = false }) {
     }
 
     const currentResLabel =
-        RESOLUTIONS.find(
-            (r) => r.width === params.width && r.height === params.height
-        )?.label || "Custom";
+        RESOLUTIONS.find((r) => r.width === params.width && r.height === params.height)?.label || "Custom";
 
     return (
-        <div className="flex flex-col gap-4 p-4 bg-zinc-900 border border-zinc-700 rounded-lg font-mono text-sm text-zinc-100 w-72">
+        <div className="flex flex-col gap-3">
 
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-zinc-700 pb-2">
-                <span className="text-xs uppercase tracking-widest text-zinc-400">Parameters</span>
-                <button
-                    onClick={() => { setParams(DEFAULTS); onChange?.(DEFAULTS); }}
-                    disabled={disabled}
-                    className="text-xs text-zinc-500 hover:text-red-400 transition-colors disabled:opacity-30"
-                >
-                    reset
-                </button>
-            </div>
+            <SectionLabel>Generation</SectionLabel>
 
-            {/* Prompt */}
-            <Field label="Prompt">
+            <Field label="Prompt" tooltip={TOOLTIPS.prompt}>
                 <textarea
                     rows={3}
                     value={params.prompt}
                     onChange={(e) => update("prompt", e.target.value)}
                     disabled={disabled}
                     placeholder="describe the subject..."
-                    className="w-full bg-zinc-800 border border-zinc-600 rounded px-2 py-1.5 text-xs text-zinc-100 placeholder-zinc-600 resize-none focus:outline-none focus:border-zinc-400 disabled:opacity-40"
+                    className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none disabled:opacity-40"
+                    style={{
+                        backgroundColor: "var(--bg-raised)",
+                        border: "1px solid var(--border)",
+                        color: "var(--text)",
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = "var(--accent)"}
+                    onBlur={(e) => e.target.style.borderColor = "var(--border)"}
                 />
             </Field>
 
-            {/* Negative Prompt */}
-            <Field label="Negative Prompt">
+            <Field label="Negative Prompt" tooltip={TOOLTIPS.negative_prompt}>
                 <textarea
                     rows={2}
                     value={params.negative_prompt}
                     onChange={(e) => update("negative_prompt", e.target.value)}
                     disabled={disabled}
                     placeholder="what to avoid..."
-                    className="w-full bg-zinc-800 border border-zinc-600 rounded px-2 py-1.5 text-xs text-zinc-100 placeholder-zinc-600 resize-none focus:outline-none focus:border-zinc-400 disabled:opacity-40"
+                    className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none disabled:opacity-40"
+                    style={{
+                        backgroundColor: "var(--bg-raised)",
+                        border: "1px solid var(--border)",
+                        color: "var(--text)",
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = "var(--accent)"}
+                    onBlur={(e) => e.target.style.borderColor = "var(--border)"}
                 />
             </Field>
 
-            {/* Resolution */}
-            <Field label="Resolution">
-                <select
-                    value={currentResLabel}
-                    onChange={handleResolution}
-                    disabled={disabled}
-                    className="w-full bg-zinc-800 border border-zinc-600 rounded px-2 py-1.5 text-xs text-zinc-100 focus:outline-none focus:border-zinc-400 disabled:opacity-40"
-                >
+            <Field label="Resolution" tooltip={TOOLTIPS.resolution}>
+                <Select value={currentResLabel} onChange={handleResolution} disabled={disabled}>
                     {RESOLUTIONS.map((r) => (
                         <option key={r.label} value={r.label}>{r.label}</option>
                     ))}
-                </select>
+                </Select>
             </Field>
 
-            {/* Sampler */}
-            <Field label="Sampler">
-                <select
-                    value={params.sampler}
-                    onChange={(e) => update("sampler", e.target.value)}
-                    disabled={disabled}
-                    className="w-full bg-zinc-800 border border-zinc-600 rounded px-2 py-1.5 text-xs text-zinc-100 focus:outline-none focus:border-zinc-400 disabled:opacity-40"
-                >
+            <Field label="Sampler" tooltip={TOOLTIPS.sampler}>
+                <Select value={params.sampler} onChange={(e) => update("sampler", e.target.value)} disabled={disabled}>
                     {SAMPLERS.map((s) => (
                         <option key={s} value={s}>{s}</option>
                     ))}
-                </select>
+                </Select>
             </Field>
 
-            {/* Steps */}
-            <Field label={`Steps — ${params.steps}`}>
+            <Field label={`Steps — ${params.steps}`} tooltip={TOOLTIPS.steps}>
                 <input
-                    type="range"
-                    min={1} max={40} step={1}
+                    type="range" min={1} max={150} step={1}
                     value={params.steps}
                     onChange={(e) => update("steps", Number(e.target.value))}
                     disabled={disabled}
-                    className="w-full accent-zinc-400 disabled:opacity-40"
+                    className="w-full disabled:opacity-40"
+                    style={{ accentColor: "var(--accent)" }}
                 />
             </Field>
 
-            {/* CFG Scale */}
-            <Field label={`CFG Scale — ${params.cfg_scale.toFixed(1)}`}>
+            <Field label={`CFG Scale — ${params.cfg_scale.toFixed(1)}`} tooltip={TOOLTIPS.cfg_scale}>
                 <input
-                    type="range"
-                    min={1} max={30} step={0.5}
+                    type="range" min={1} max={30} step={0.5}
                     value={params.cfg_scale}
                     onChange={(e) => update("cfg_scale", Number(e.target.value))}
                     disabled={disabled}
-                    className="w-full accent-zinc-400 disabled:opacity-40"
+                    className="w-full disabled:opacity-40"
+                    style={{ accentColor: "var(--accent)" }}
                 />
             </Field>
 
-            {/* Seed */}
-            <Field label="Seed">
+            <Field label="Seed" tooltip={TOOLTIPS.seed}>
                 <div className="flex gap-1">
                     <input
                         type="number"
                         value={params.seed}
                         onChange={(e) => update("seed", Number(e.target.value))}
                         disabled={disabled}
-                        className="flex-1 bg-zinc-800 border border-zinc-600 rounded px-2 py-1.5 text-xs text-zinc-100 focus:outline-none focus:border-zinc-400 disabled:opacity-40"
+                        className="flex-1 rounded px-2 py-1.5 text-xs focus:outline-none disabled:opacity-40"
+                        style={{
+                            backgroundColor: "var(--bg-raised)",
+                            border: "1px solid var(--border)",
+                            color: "var(--text)",
+                        }}
+                        onFocus={(e) => e.target.style.borderColor = "var(--accent)"}
+                        onBlur={(e) => e.target.style.borderColor = "var(--border)"}
                     />
-                    <button
-                        onClick={randomizeSeed}
-                        disabled={disabled}
-                        title="random seed"
-                        className="px-2 bg-zinc-800 border border-zinc-600 rounded text-zinc-400 hover:text-zinc-100 hover:border-zinc-400 transition-colors disabled:opacity-40"
-                    >
-                        ↺
-                    </button>
-                    <button
-                        onClick={() => update("seed", -1)}
-                        disabled={disabled}
-                        title="set to random (-1)"
-                        className="px-2 bg-zinc-800 border border-zinc-600 rounded text-zinc-400 hover:text-zinc-100 hover:border-zinc-400 transition-colors disabled:opacity-40 text-xs"
-                    >
-                        rnd
-                    </button>
+                    <IconButton onClick={randomizeSeed} disabled={disabled} title="randomize">↺</IconButton>
+                    <IconButton onClick={() => update("seed", -1)} disabled={disabled} title="auto">rnd</IconButton>
                 </div>
-                <p className="text-zinc-600 text-xs mt-1">-1 = random each run</p>
+                <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>-1 = random each run</p>
             </Field>
+
+            {/* Reset */}
+            <button
+                onClick={() => { setParams(DEFAULTS); onChange?.(DEFAULTS); }}
+                disabled={disabled}
+                className="text-xs text-left transition-colors disabled:opacity-30"
+                style={{ color: "var(--text-muted)" }}
+                onMouseEnter={(e) => e.target.style.color = "#f87171"}
+                onMouseLeave={(e) => e.target.style.color = "var(--text-muted)"}
+            >
+                ↺ reset parameters
+            </button>
 
         </div>
     );
 }
 
-// small wrapper so every field has consistent label + spacing
-function Field({ label, children }) {
+function SectionLabel({ children }) {
     return (
-        <div className="flex flex-col gap-1.5">
-            <label className="text-xs text-zinc-400 uppercase tracking-wider">{label}</label>
+        <div className="flex items-center gap-2">
+            <span className="text-xs uppercase tracking-[0.15em]" style={{ color: "var(--text-muted)" }}>
+                {children}
+            </span>
+            <div className="flex-1 h-px" style={{ backgroundColor: "var(--border-dim)" }} />
+        </div>
+    );
+}
+
+function Field({ label, tooltip, children }) {
+    return (
+        <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-1.5">
+                <label className="text-xs uppercase tracking-wider" style={{ color: "var(--text-dim)" }}>
+                    {label}
+                </label>
+                {tooltip && (
+                    <div className="tooltip-wrap">
+                        <span className="text-xs cursor-default" style={{ color: "var(--text-muted)" }}>?</span>
+                        <span className="tooltip-box" style={{ maxWidth: "200px", whiteSpace: "normal", textAlign: "left" }}>
+                            {tooltip}
+                        </span>
+                    </div>
+                )}
+            </div>
             {children}
         </div>
+    );
+}
+
+function Select({ value, onChange, disabled, children }) {
+    return (
+        <select
+            value={value}
+            onChange={onChange}
+            disabled={disabled}
+            className="w-full rounded px-2 py-1.5 text-xs focus:outline-none disabled:opacity-40"
+            style={{
+                backgroundColor: "var(--bg-raised)",
+                border: "1px solid var(--border)",
+                color: "var(--text)",
+            }}
+        >
+            {children}
+        </select>
+    );
+}
+
+function IconButton({ onClick, disabled, title, children }) {
+    return (
+        <button
+            onClick={onClick}
+            disabled={disabled}
+            title={title}
+            className="px-2 rounded text-xs transition-colors disabled:opacity-40"
+            style={{
+                backgroundColor: "var(--bg-raised)",
+                border: "1px solid var(--border)",
+                color: "var(--text-dim)",
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.borderColor = "var(--accent)"}
+            onMouseLeave={(e) => e.currentTarget.style.borderColor = "var(--border)"}
+        >
+            {children}
+        </button>
     );
 }
