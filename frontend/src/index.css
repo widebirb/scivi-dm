@@ -145,3 +145,10 @@ body,
     background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.015) 2px, rgba(0, 0, 0, 0.015) 4px);
     pointer-events: none;
 }
+
+.tooltip-right .tooltip-box {
+    top: 50%;
+    left: calc(100% + 8px);
+    bottom: auto;
+    transform: translateY(-50%);
+}

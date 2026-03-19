@@ -12,7 +12,7 @@ export default function Tooltip({ content, children }) {
             {children}
             {visible && content && (
                 <div
-                    className="absolute left-0 bottom-full mb-2 z-50 pointer-events-none"
+                    className="absolute left-0 bottom-full mb-2 z-50 pointer-events-none z-40"
                     style={{ minWidth: "160px", maxWidth: "240px" }}
                 >
                     <div

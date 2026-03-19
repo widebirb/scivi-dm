@@ -141,13 +141,13 @@ export default function ParameterControl({ onChange, disabled = false }) {
             </Field>
 
             <Field label="Seed" tooltip={TOOLTIPS.seed}>
-                <div className="flex gap-1">
+                <div className="flex gap-1 min-w-0">
                     <input
                         type="number"
                         value={params.seed}
                         onChange={(e) => update("seed", Number(e.target.value))}
                         disabled={disabled}
-                        className="flex-1 rounded px-2 py-1.5 text-xs focus:outline-none disabled:opacity-40"
+                        className="min-w-0 w-full rounded px-2 py-1.5 text-xs focus:outline-none disabled:opacity-40"
                         style={{
                             backgroundColor: "var(--bg-raised)",
                             border: "1px solid var(--border)",
@@ -156,8 +156,8 @@ export default function ParameterControl({ onChange, disabled = false }) {
                         onFocus={(e) => e.target.style.borderColor = "var(--accent)"}
                         onBlur={(e) => e.target.style.borderColor = "var(--border)"}
                     />
-                    <IconButton onClick={randomizeSeed} disabled={disabled} title="randomize">↺</IconButton>
-                    <IconButton onClick={() => update("seed", -1)} disabled={disabled} title="auto">rnd</IconButton>
+                    <IconButton onClick={randomizeSeed} disabled={disabled} title="randomize seed">↺</IconButton>
+                    <IconButton onClick={() => update("seed", -1)} disabled={disabled} title="set to -1 (random)">−1</IconButton>
                 </div>
                 <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>-1 = random each run</p>
             </Field>
@@ -191,13 +191,13 @@ function SectionLabel({ children }) {
 
 function Field({ label, tooltip, children }) {
     return (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 min-w-0">
             <div className="flex items-center gap-1.5">
                 <label className="text-xs uppercase tracking-wider" style={{ color: "var(--text-dim)" }}>
                     {label}
                 </label>
                 {tooltip && (
-                    <div className="tooltip-wrap">
+                    <div className="tooltip-wrap tooltip-right">
                         <span className="text-xs cursor-default" style={{ color: "var(--text-muted)" }}>?</span>
                         <span className="tooltip-box" style={{ maxWidth: "200px", whiteSpace: "normal", textAlign: "left" }}>
                             {tooltip}
