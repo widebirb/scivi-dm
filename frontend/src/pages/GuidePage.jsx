@@ -3,38 +3,25 @@ export default function GuidePage() {
         {
             title: "01 / Generate",
             steps: [
-                "Enter a prompt describing the facial composite you want to generate.",
-                "Optionally add a negative prompt for things to avoid (e.g. 'blurry, deformed').",
-                "Adjust resolution, sampler, steps, and CFG scale as needed.",
-                "Set a seed or leave at -1 for a random result.",
-                "Click Generate. The result appears in the canvas.",
+                "67"
             ],
         },
         {
             title: "02 / Inpaint",
             steps: [
-                "After generating an image, switch to the Inpaint tool on the canvas toolbar.",
-                "Use the paint brush to mark the region you want to modify.",
-                "Use erase to remove parts of the mask. [ and ] adjust brush size.",
-                "Expand Inpaint Options to adjust denoising strength and mask blur.",
-                "Click Inpaint Selection to regenerate only the masked area.",
+                "67"
             ],
         },
         {
             title: "03 / Version History",
             steps: [
-                "Every generation is saved automatically in the history panel on the right.",
-                "Click any thumbnail to load that version back to the canvas.",
-                "Expand a version entry to see the exact parameters used.",
-                "The seed shown is always the resolved value — use it to reproduce the exact result.",
+                " 67",
             ],
         },
         {
             title: "04 / Theme",
             steps: [
-                "Use the theme toggle in the header to switch between Color and Mono modes.",
-                "Mono mode applies a grayscale filter to the UI accents and composite images.",
-                "Useful for printing — 2 pesos per page instead of 10.",
+                " 67",
             ],
         },
     ];
