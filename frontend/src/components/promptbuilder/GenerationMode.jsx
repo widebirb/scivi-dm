@@ -90,6 +90,8 @@ export default function GenerationMode({ onCopy }) {
             <div className="flex flex-col gap-3 w-96 overflow-y-auto pr-2 shrink-0">
 
                 {CHUNKS.map((chunk) => {
+                    const chunkData = chunks[chunk.id];
+                    const activeTags = chunkData.tags;
 
                     return (
                         <div
@@ -108,6 +110,38 @@ export default function GenerationMode({ onCopy }) {
                             {/* Hint */}
                             <p className="text-xs" style={{ color: "var(--text-muted)" }}>{chunk.hint}</p>
 
+                            {/* Suggestion chips (click to add as a weighted tag) */}
+                            <div className="flex flex-wrap gap-1">
+                                {chunk.suggestions.map((tag) => {
+                                    const isActive = activeTags.some((t) => t.label === tag);
+                                    return (
+                                        <button
+                                            key={tag}
+                                            onClick={() => isActive ? removeTag(chunk.id, activeTags.find(t => t.label === tag).id) : addTag(chunk.id, tag)}
+                                            className="px-2 py-0.5 rounded-sm text-xs transition-colors"
+                                            style={{
+                                                backgroundColor: isActive ? "var(--accent-dim)" : "var(--bg-raised)",
+                                                border: `1px solid ${isActive ? "var(--accent)" : "var(--border-dim)"}`,
+                                                color: isActive ? "var(--accent-text)" : "var(--text-muted)",
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                if (!isActive) {
+                                                    e.currentTarget.style.borderColor = "var(--accent)";
+                                                    e.currentTarget.style.color = "var(--accent-text)";
+                                                }
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                if (!isActive) {
+                                                    e.currentTarget.style.borderColor = "var(--border-dim)";
+                                                    e.currentTarget.style.color = "var(--text-muted)";
+                                                }
+                                            }}
+                                        >
+                                            {isActive ? "✓ " : "+ "}{tag}
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
                     );
                 })}
