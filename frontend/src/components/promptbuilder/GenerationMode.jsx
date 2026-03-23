@@ -110,6 +110,21 @@ export default function GenerationMode({ onCopy }) {
                             {/* Hint */}
                             <p className="text-xs" style={{ color: "var(--text-muted)" }}>{chunk.hint}</p>
 
+                            {/* Freeform textarea (user manages their own syntax here) */}
+                            <textarea
+                                rows={2}
+                                value={chunkData.text}
+                                onChange={(e) => updateText(chunk.id, e.target.value)}
+                                placeholder={chunk.placeholder}
+                                className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none"
+                                style={{
+                                    backgroundColor: "var(--bg-surface)",
+                                    border: "1px solid var(--border)",
+                                    color: "var(--text)",
+                                }}
+                                onFocus={(e) => e.target.style.borderColor = "var(--accent)"}
+                                onBlur={(e) => e.target.style.borderColor = "var(--border)"}
+                            />
 
                             {/* Suggestion chips (click to add as a weighted tag) */}
                             <div className="flex flex-wrap gap-1">
