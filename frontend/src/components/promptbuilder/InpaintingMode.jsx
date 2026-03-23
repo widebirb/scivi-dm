@@ -26,7 +26,7 @@ export default function InpaintingMode({ onCopy }) {
     }
 
     function addNegTag() {
-        setNegTags((t) => [...t, { text: "", weight: 1.7 }]);
+        setNegTags((t) => [...t, { text: "", weight: 1 }]);
     }
 
     function updateNegTag(i, field, value) {
@@ -74,7 +74,7 @@ export default function InpaintingMode({ onCopy }) {
                     </div>
 
                     <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-                        Repeat the same feature in 2–3 different phrasings. The model has little context in a small masked area — repetition helps.
+                        Repeat the same feature in 2–3 different phrasings. The model has little context in a small masked area, repetition is important.
                     </p>
 
                     {variations.map((v, i) => (
@@ -140,7 +140,7 @@ export default function InpaintingMode({ onCopy }) {
                         Negative Tags
                     </span>
                     <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-                        Inpainting negatives should be heavily weighted — default is 1.7.
+                        Inpainting negatives should be heavily weighted.
                     </p>
 
                     {negTags.map((tag, i) => (
@@ -167,11 +167,11 @@ export default function InpaintingMode({ onCopy }) {
                                     backgroundColor: "var(--bg-raised)",
                                     border: "1px solid var(--border)",
                                     color: "var(--text-dim)",
-                                    width: "60px",
+                                    width: "80px",
                                 }}
                             >
                                 {WEIGHT_PRESETS.map((w) => (
-                                    <option key={w} value={w}>{w === 1.0 ? "×1" : `:${w.toFixed(1)}`}</option>
+                                    <option key={w} value={w}>{w === 1.0 ? ":1" : `:${w.toFixed(1)}`}</option>
                                 ))}
                             </select>
 
