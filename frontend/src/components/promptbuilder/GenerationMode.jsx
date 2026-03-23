@@ -110,6 +110,61 @@ export default function GenerationMode({ onCopy }) {
                             {/* Hint */}
                             <p className="text-xs" style={{ color: "var(--text-muted)" }}>{chunk.hint}</p>
 
+                            {/* Active tags with individual weight controls */}
+                            {activeTags.length > 0 && (
+                                <div className="flex flex-col gap-1">
+                                    {activeTags.map((tag) => (
+                                        <div
+                                            key={tag.id}
+                                            className="flex items-center gap-1.5 px-2 py-1 rounded"
+                                            style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-dim)" }}
+                                        >
+                                            {/* Tag label */}
+                                            <span className="flex-1 text-xs min-w-0 truncate" style={{ color: "var(--text-dim)" }}>
+                                                {tag.weight !== null
+                                                    ? <span style={{ color: "var(--accent-text)" }}>({tag.label}:{tag.weight.toFixed(1)})</span>
+                                                    : tag.label
+                                                }
+                                            </span>
+
+                                            {/* Weight selector */}
+                                            <select
+                                                value={tag.weight === null ? "null" : tag.weight}
+                                                onChange={(e) => setTagWeight(
+                                                    chunk.id,
+                                                    tag.id,
+                                                    e.target.value === "null" ? null : Number(e.target.value)
+                                                )}
+                                                className="text-xs rounded px-1 py-0.5 focus:outline-none shrink-0"
+                                                style={{
+                                                    backgroundColor: "var(--bg-raised)",
+                                                    border: `1px solid ${tag.weight !== null ? "var(--accent)" : "var(--border)"}`,
+                                                    color: tag.weight !== null ? "var(--accent-text)" : "var(--text-muted)",
+                                                    width: "90px",
+                                                }}
+                                            >
+                                                {WEIGHT_OPTIONS.map((w) => (
+                                                    <option key={w.label} value={w.value === null ? "null" : w.value}>
+                                                        {w.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+
+                                            {/* Remove */}
+                                            <button
+                                                onClick={() => removeTag(chunk.id, tag.id)}
+                                                className="text-xs shrink-0 transition-colors"
+                                                style={{ color: "var(--text-muted)" }}
+                                                onMouseEnter={(e) => e.target.style.color = "#ef4444"}
+                                                onMouseLeave={(e) => e.target.style.color = "var(--text-muted)"}
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
                             {/* Freeform textarea (user manages their own syntax here) */}
                             <textarea
                                 rows={2}
