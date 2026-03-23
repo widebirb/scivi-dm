@@ -191,7 +191,7 @@ function SectionLabel({ children }) {
 
 function Field({ label, tooltip, children }) {
     return (
-        <div className="flex flex-col gap-1 min-w-0">
+        <div className="flex flex-col min-w-0">
             <div className="flex items-center gap-1.5">
                 <label className="text-xs uppercase tracking-wider" style={{ color: "var(--text-dim)" }}>
                     {label}
