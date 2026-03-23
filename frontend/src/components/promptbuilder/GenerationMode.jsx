@@ -118,7 +118,7 @@ export default function GenerationMode({ onCopy }) {
                                         <button
                                             key={tag}
                                             onClick={() => isActive ? removeTag(chunk.id, activeTags.find(t => t.label === tag).id) : addTag(chunk.id, tag)}
-                                            className="px-2 py-0.5 rounded-sm text-xs transition-colors"
+                                            className="px-2 py-0.5 rounded-full text-xs transition-colors"
                                             style={{
                                                 backgroundColor: isActive ? "var(--accent-dim)" : "var(--bg-raised)",
                                                 border: `1px solid ${isActive ? "var(--accent)" : "var(--border-dim)"}`,
@@ -145,6 +145,33 @@ export default function GenerationMode({ onCopy }) {
                         </div>
                     );
                 })}
+
+                {/* Negative prompt */}
+                <div
+                    className="rounded p-3 flex flex-col gap-2"
+                    style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border-dim)" }}
+                >
+                    <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#ef4444" }}>
+                        Negative Prompt
+                    </span>
+                    <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                        Things to exclude. You control weighting syntax here manually.
+                    </p>
+                    <textarea
+                        rows={2}
+                        value={negativePrompt}
+                        onChange={(e) => setNegativePrompt(e.target.value)}
+                        placeholder="e.g. blurry, deformed, (extra fingers:1.4), bad anatomy"
+                        className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none"
+                        style={{
+                            backgroundColor: "var(--bg-surface)",
+                            border: "1px solid var(--border)",
+                            color: "var(--text)",
+                        }}
+                        onFocus={(e) => e.target.style.borderColor = "#ef4444"}
+                        onBlur={(e) => e.target.style.borderColor = "var(--border)"}
+                    />
+                </div>
 
             </div>
 
