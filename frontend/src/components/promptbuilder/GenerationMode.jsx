@@ -110,6 +110,7 @@ export default function GenerationMode({ onCopy }) {
                             {/* Hint */}
                             <p className="text-xs" style={{ color: "var(--text-muted)" }}>{chunk.hint}</p>
 
+
                             {/* Suggestion chips (click to add as a weighted tag) */}
                             <div className="flex flex-wrap gap-1">
                                 {chunk.suggestions.map((tag) => {
@@ -175,6 +176,66 @@ export default function GenerationMode({ onCopy }) {
 
             </div>
 
+            {/* Right - live preview */}
+            <div className="flex-1 flex flex-col gap-3 min-h-0">
+                <div className="flex items-center justify-between">
+                    <span className="text-xs uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+                        Live Preview
+                    </span>
+                    <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+                        {assembledChunks.length} chunk{assembledChunks.length !== 1 ? "s" : ""}
+                    </span>
+                </div>
+
+                <div
+                    className="flex-1 rounded p-3 text-xs overflow-y-auto font-mono leading-relaxed"
+                    style={{
+                        backgroundColor: "var(--bg)",
+                        border: "1px solid var(--border-dim)",
+                        color: "var(--text-dim)",
+                        whiteSpace: "pre-wrap",
+                        wordBreak: "break-word",
+                    }}
+                >
+                    {fullPrompt || (
+                        <span style={{ color: "var(--text-muted)" }}>
+                            Add chips or type in sections on the left to see the assembled prompt.
+                            {"\n\n"}//BREAK// separators are inserted automatically between chunks.
+                        </span>
+                    )}
+                </div>
+
+                {negativePrompt && (
+                    <div>
+                        <p className="text-xs mb-1" style={{ color: "#ef4444" }}>Negative:</p>
+                        <div
+                            className="rounded p-3 text-xs"
+                            style={{ backgroundColor: "var(--bg)", border: "1px solid #fca5a5", color: "var(--text-dim)" }}
+                        >
+                            {negativePrompt}
+                        </div>
+                    </div>
+                )}
+
+                <div
+                    className="rounded p-3 text-xs flex flex-col gap-1"
+                    style={{ backgroundColor: "var(--accent-dim)", border: "1px solid var(--accent)" }}
+                >
+                    <p className="font-semibold" style={{ color: "var(--accent-text)" }}>Prompting Guide</p>
+                    <p style={{ color: "var(--text-dim)" }}>· First keywords carry most weight - subject + style first</p>
+                    <p style={{ color: "var(--text-dim)" }}>· //BREAK// separates 75-token chunks to avoid attention competition</p>
+                    <p style={{ color: "var(--text-dim)" }}>· Stubborn features: repeat across chunks AND increase weight</p>
+                    <p style={{ color: "var(--text-dim)" }}>· Each chip gets its own weight: <code>(keyword:1.4)</code> - correct syntax</p>
+                </div>
+
+                <button
+                    onClick={handleCopy}
+                    disabled={!fullPrompt}
+                    className="w-full py-2.5 rounded text-sm font-semibold uppercase tracking-wider btn-generate disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                    Copy Prompt
+                </button>
+            </div>
         </div>
     );
 }
