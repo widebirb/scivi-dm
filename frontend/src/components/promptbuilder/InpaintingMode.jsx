@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { REGIONS, REGION_HINTS, WEIGHT_PRESETS } from "./config";
+import { WEIGHT_PRESETS } from "./config";
 
 
 function buildNegativeTag(text, weight) {
@@ -9,9 +9,22 @@ function buildNegativeTag(text, weight) {
 }
 
 export default function InpaintingMode({ onCopy }) {
-    const [region, setRegion] = useState(null);
     const [variations, setVariations] = useState([""]);
-    const [negTags, setNegTags] = useState([{ text: "", weight: 1.7 }]);
+    const [negTags, setNegTags] = useState([{ text: "", weight: 1 }]);
+
+    function addVariation() {
+        if (variations.length >= 3) return;
+        setVariations((v) => [...v, ""]);
+    }
+
+    function updateVariation(i, value) {
+        setVariations((v) => v.map((item, idx) => idx === i ? value : item));
+    }
+
+    function removeVariation(i) {
+        setVariations((v) => v.filter((_, idx) => idx !== i));
+    }
+
 
     const filledVariations = variations.filter((v) => v.trim());
     const assembledPrompt = filledVariations.join(", ");
@@ -32,6 +45,83 @@ export default function InpaintingMode({ onCopy }) {
     return (
         <div className="flex gap-4 h-full min-h-0">
 
+            {/* Left - inputs */}
+            <div className="flex flex-col gap-4 w-96 overflow-y-auto pr-2 shrink-0">
+
+                {/* Prompt variations */}
+                <div
+                    className="rounded p-3 flex flex-col gap-2"
+                    style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border-dim)" }}
+                >
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--accent-text)" }}>
+                            Prompt Variations
+                        </span>
+                        <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+                            {variations.length}/3
+                        </span>
+                    </div>
+
+                    <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                        Repeat the same feature in 2–3 different phrasings. The model has little context in a small masked area — repetition helps.
+                    </p>
+
+                    {variations.map((v, i) => (
+                        <div key={i} className="flex gap-1 items-start">
+                            <div className="flex flex-col flex-1 gap-0.5">
+                                <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+                                    phrasing {i + 1}
+                                </span>
+                                <textarea
+                                    rows={2}
+                                    value={v}
+                                    onChange={(e) => updateVariation(i, e.target.value)}
+                                    placeholder="Describe the feature you're inpainting..."
+                                    className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none"
+                                    style={{
+                                        backgroundColor: "var(--bg-surface)",
+                                        border: "1px solid var(--border)",
+                                        color: "var(--text)",
+                                    }}
+                                    onFocus={(e) => e.target.style.borderColor = "var(--accent)"}
+                                    onBlur={(e) => e.target.style.borderColor = "var(--border)"}
+                                />
+                            </div>
+                            {variations.length > 1 && (
+                                <button
+                                    onClick={() => removeVariation(i)}
+                                    className="mt-5 text-xs transition-colors"
+                                    style={{ color: "var(--text-muted)" }}
+                                    onMouseEnter={(e) => e.target.style.color = "#ef4444"}
+                                    onMouseLeave={(e) => e.target.style.color = "var(--text-muted)"}
+                                >
+                                    ✕
+                                </button>
+                            )}
+                        </div>
+                    ))}
+
+                    {variations.length < 3 && (
+                        <button
+                            onClick={addVariation}
+                            className="text-xs py-1.5 rounded transition-colors"
+                            style={{ border: "1px dashed var(--border)", color: "var(--text-muted)" }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.borderColor = "var(--accent)";
+                                e.currentTarget.style.color = "var(--accent-text)";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.borderColor = "var(--border)";
+                                e.currentTarget.style.color = "var(--text-muted)";
+                            }}
+                        >
+                            + add variation
+                        </button>
+                    )}
+                </div>
+
+
+            </div>
 
             {/* Right - preview */}
             <div className="flex-1 flex flex-col gap-3 min-h-0">
@@ -62,11 +152,7 @@ export default function InpaintingMode({ onCopy }) {
                         <p className="text-xs mb-1" style={{ color: "#ef4444" }}>Negative:</p>
                         <div
                             className="rounded p-3 text-xs font-mono"
-                            style={{
-                                backgroundColor: "var(--bg)",
-                                border: "1px solid #fca5a5",
-                                color: "var(--text-dim)",
-                            }}
+                            style={{ backgroundColor: "var(--bg)", border: "1px solid #fca5a5", color: "var(--text-dim)" }}
                         >
                             {assembledNegative}
                         </div>
@@ -80,9 +166,9 @@ export default function InpaintingMode({ onCopy }) {
                     style={{ backgroundColor: "var(--accent-dim)", border: "1px solid var(--accent)" }}
                 >
                     <p className="font-semibold" style={{ color: "var(--accent-text)" }}>Inpainting rules</p>
-                    <p style={{ color: "var(--text-dim)" }}>· Only describe the masked region - no age, style, background</p>
+                    <p style={{ color: "var(--text-dim)" }}>· Only describe the masked region — no age, style, background</p>
                     <p style={{ color: "var(--text-dim)" }}>· Repeat the feature 2–3× in different phrasings</p>
-                    <p style={{ color: "var(--text-dim)" }}>· BREAK is optional - inpaint prompts are short</p>
+                    <p style={{ color: "var(--text-dim)" }}>· BREAK is optional — inpaint prompts are short</p>
                     <p style={{ color: "var(--text-dim)" }}>· Weight negatives aggressively: <code>teeth:1.7</code> not just <code>teeth</code></p>
                 </div>
 
@@ -93,7 +179,6 @@ export default function InpaintingMode({ onCopy }) {
                 >
                     Copy Prompt
                 </button>
-
             </div>
         </div>
     );
