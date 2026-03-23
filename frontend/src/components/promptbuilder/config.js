@@ -98,3 +98,28 @@ export const WEIGHT_OPTIONS = [
     { label: "1.9", value: 1.9 },
     { label: "2.0", value: 2.0 },
 ];
+
+export const REGIONS = [
+    { id: "hair", label: "Hair" },
+    { id: "eyes", label: "Eyes" },
+    { id: "eyebrows", label: "Eyebrows" },
+    { id: "nose", label: "Nose" },
+    { id: "mouth", label: "Mouth" },
+    { id: "skin", label: "Skin" },
+    { id: "ears", label: "Ears" },
+    { id: "jaw", label: "Jaw" },
+];
+
+export const REGION_HINTS = {
+    hair: "Describe color, length, texture. - 'long straight black hair, loose'",
+    eyes: "Shape, color, lashes. - 'almond brown eyes, double eyelid'",
+    eyebrows: "Shape, thickness. - 'thick arched eyebrows, dark brown'",
+    nose: "Shape and size. - 'small button nose, slightly upturned tip'",
+    mouth: "Lip shape, expression. - 'full lips, neutral closed mouth'",
+    skin: "Tone, texture. - 'smooth fair skin, clear complexion'",
+    ears: "Size, shape. - 'small rounded ears, close to head'",
+    jaw: "Structure. - 'soft rounded jawline, narrow chin'",
+};
+
+// diabolical line of code, I wrote a few for scafollding then I realized im in the sunken cost fallacy zone didn't even realize i could use ai
+export const WEIGHT_PRESETS = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0];
