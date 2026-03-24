@@ -9,6 +9,7 @@ import Footer from "./components/Footer";
 import GeneratingOverlay from "./components/GeneratingOverlay";
 import GuidePage from "./pages/GuidePage";
 import AboutPage from "./pages/AboutPage";
+import PromptBuilder from "./components/promptbuilder/PromptBuilder";
 
 export default function App() {
     const {
@@ -23,6 +24,7 @@ export default function App() {
         denoising_strength: 0.75,
         mask_blur: 4,
     });
+    const [promptBuilderOpen, setPromptBuilderOpen] = useState(false);
 
     // Elapsed timer
     const [elapsed, setElapsed] = useState(0);
@@ -47,12 +49,11 @@ export default function App() {
             {page === "guide" && <GuidePage />}
             {page === "about" && <AboutPage />}
 
-
             {/* Main workspace */}
             {page === null && (
                 <div className="flex flex-1 overflow-hidden">
 
-                    {/*Left sdierbar*/}
+                    {/* Left sdierbar */}
                     <aside
                         className="w-80 shrink-0 flex flex-col overflow-y-auto overflow-x-hidden border-r"
                         style={{ borderColor: "var(--border-dim)", backgroundColor: "var(--bg-surface)" }}
@@ -61,11 +62,31 @@ export default function App() {
                             <ParameterControl onChange={setParameters} disabled={isLoading} />
                         </div>
 
-                        {/*Generate Button*/}
+                        {/* Generate Button */}
                         <div
                             className="p-4 border-t shrink-0 flex flex-col gap-2"
                             style={{ borderColor: "var(--border-dim)" }}
                         >
+                            <button
+                                onClick={() => setPromptBuilderOpen(true)}
+                                className="w-full py-2 rounded text-xs uppercase tracking-wider transition-colors"
+                                style={{
+                                    border: "1px solid var(--accent)",
+                                    color: "var(--accent-text)",
+                                    backgroundColor: "var(--accent-dim)",
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = "var(--accent)";
+                                    e.currentTarget.style.color = "var(--generate-text)";
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = "var(--accent-dim)";
+                                    e.currentTarget.style.color = "var(--accent-text)";
+                                }}
+                            >
+                                ✦ prompt builder
+                            </button>
+
                             {error && <p className="text-xs" style={{ color: "#ef4444" }}>{error}</p>}
                             <button
                                 onClick={handleGenerate}
@@ -164,6 +185,12 @@ export default function App() {
             )}
 
             <Footer />
+
+            {/* Prompt Builder modal */}
+            <PromptBuilder
+                isOpen={promptBuilderOpen}
+                onClose={() => setPromptBuilderOpen(false)}
+            />
         </div>
     );
 }
