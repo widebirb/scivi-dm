@@ -110,16 +110,28 @@ export default function App() {
                     >
                         {/* Canvas column para mawala yung matabang scrollbar sa baba*/}
                         <div className="flex flex-col gap-3 shrink-0">
-                            {/* Metadata */}
+                            {/* Metadata Chips */}
                             {activeVersion && (
                                 <div
-                                    className="flex gap-4 text-xs pb-2"
-                                    style={{ borderBottom: "1px solid var(--border-dim)", color: "var(--text-muted)" }}
+                                    className="flex flex-wrap gap-2 pb-3"
+                                    style={{ borderBottom: "1px solid var(--border-dim)" }}
                                 >
-                                    <span>seed <span style={{ color: "var(--accent-text)" }}>{activeVersion.parameters.seed}</span></span>
-                                    <span>steps {activeVersion.parameters.steps}</span>
-                                    <span>cfg {activeVersion.parameters.cfg_scale}</span>
-                                    <span>{activeVersion.parameters.width}×{activeVersion.parameters.height}</span>
+                                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border" style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--border-dim)" }}>
+                                        <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>Seed</span>
+                                        <span className="text-xs font-mono" style={{ color: "var(--accent-text)" }}>{activeVersion.parameters.seed}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border" style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--border-dim)" }}>
+                                        <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>Steps</span>
+                                        <span className="text-xs font-mono" style={{ color: "var(--text-dim)" }}>{activeVersion.parameters.steps}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border" style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--border-dim)" }}>
+                                        <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>CFG</span>
+                                        <span className="text-xs font-mono" style={{ color: "var(--text-dim)" }}>{activeVersion.parameters.cfg_scale}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border" style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--border-dim)" }}>
+                                        <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>Res</span>
+                                        <span className="text-xs font-mono" style={{ color: "var(--text-dim)" }}>{activeVersion.parameters.width}×{activeVersion.parameters.height}</span>
+                                    </div>
                                 </div>
                             )}
 
