@@ -60,6 +60,8 @@ class ModelManager:
             INPAINT_MODEL_PATH,
             torch_dtype=torch.float16,
             use_safetensors=True,
+            low_cpu_mem_usage=False,
+            ignore_mismatched_sizes=True,
         ).to(self.device)
 
         self.inpaint_pipeline.enable_attention_slicing()
