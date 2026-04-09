@@ -60,6 +60,7 @@ class ModelManager:
             INPAINT_MODEL_PATH,
             torch_dtype=torch.float16,
             use_safetensors=True,
+            config="diffusers/stable-diffusion-xl-1.0-inpainting-0.1",
             low_cpu_mem_usage=False,
             ignore_mismatched_sizes=True,
         ).to(self.device)
