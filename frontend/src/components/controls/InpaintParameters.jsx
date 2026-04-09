@@ -20,15 +20,24 @@ export default function InpaintParameters({ onChange, disabled = false }) {
                 "balanced";
 
     return (
-        <div className="flex flex-col gap-3 text-xs" style={{ fontFamily: "var(--font-mono)" }}>
+        <div className="flex flex-col gap-3 text-xs">
 
             {/* Denoising Strength */}
             <div className="flex flex-col gap-1">
-                <div className="flex items-center justify-between">
-                    <label className="uppercase tracking-wider" style={{ color: "var(--text-dim)" }}>
-                        Denoising — {params.denoising_strength.toFixed(2)}
+                <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs uppercase tracking-wider font-medium" style={{ color: "var(--text-dim)" }}>
+                        Denoising
                     </label>
-                    <span style={{ color: "var(--text-muted)" }}>{denoisingHint}</span>
+                    <span 
+                        className="text-[11px] font-mono px-1.5 py-0.5 rounded shadow-sm border" 
+                        style={{ 
+                            backgroundColor: "var(--bg-surface)", 
+                            borderColor: "var(--border-dim)", 
+                            color: "var(--accent-text)" 
+                        }}
+                    >
+                        {params.denoising_strength.toFixed(2)}
+                    </span>
                 </div>
                 <input
                     type="range" min={0} max={1} step={0.01}
@@ -36,22 +45,33 @@ export default function InpaintParameters({ onChange, disabled = false }) {
                     onChange={(e) => update("denoising_strength", Number(e.target.value))}
                     disabled={disabled}
                     className="w-full disabled:opacity-40"
-                    style={{ accentColor: "var(--accent2)" }}
                 />
+                <p style={{ color: "var(--text-muted)" }}>{denoisingHint}</p>
             </div>
 
             {/* Mask Blur */}
             <div className="flex flex-col gap-1">
-                <label className="uppercase tracking-wider" style={{ color: "var(--text-dim)" }}>
-                    Mask Blur — {params.mask_blur}px
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs uppercase tracking-wider font-medium" style={{ color: "var(--text-dim)" }}>
+                        Mask Blur
+                    </label>
+                    <span 
+                        className="text-[11px] font-mono px-1.5 py-0.5 rounded shadow-sm border" 
+                        style={{ 
+                            backgroundColor: "var(--bg-surface)", 
+                            borderColor: "var(--border-dim)", 
+                            color: "var(--accent-text)" 
+                        }}
+                    >
+                        {params.mask_blur}px
+                    </span>
+                </div>
                 <input
                     type="range" min={0} max={64} step={1}
                     value={params.mask_blur}
                     onChange={(e) => update("mask_blur", Number(e.target.value))}
                     disabled={disabled}
                     className="w-full disabled:opacity-40"
-                    style={{ accentColor: "var(--accent2)" }}
                 />
                 <p style={{ color: "var(--text-muted)" }}>softens mask edges to reduce seams</p>
             </div>
