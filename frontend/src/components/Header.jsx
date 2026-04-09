@@ -29,7 +29,6 @@ export default function Header({ onNavigate, currentPage }) {
                     className="text-xs hidden sm:block"
                     style={{ color: "var(--text-muted)" }}
                 >
-                    / facial composite generation
                 </span>
 
                 <StatusBar />
@@ -69,8 +68,7 @@ export default function Header({ onNavigate, currentPage }) {
                         onMouseEnter={(e) => e.currentTarget.style.color = "var(--text-dim)"}
                         onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-muted)"}
                     >
-                        <span>{theme === "colored" ? "◑" : "○"}</span>
-                        <span className="uppercase tracking-wider">{theme === "colored" ? "color" : "mono"}</span>
+                        <span className="uppercase tracking-wider">{theme === "colored" ? "color" : "Gray"}</span>
                     </button>
                     <span className="tooltip-box">
                         {theme === "colored" ? "switch to mono / grayscale" : "switch to color"}
