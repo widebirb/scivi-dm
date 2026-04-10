@@ -31,6 +31,7 @@ async def real_generate(params: GenerationParameters) -> dict:
     this fine for single-worker setups. For production multi-user you'd
     wrap in run_in_executor, but for Vast.ai single-user that's overkill.
     """
+    model_manager.use_base()
     pipeline = model_manager.get_base()
     model_manager.set_sampler(pipeline, params.sampler)
 
@@ -78,6 +79,7 @@ async def real_inpaint(
     - Black (0) = keep this region
     - Same dimensions as the input image
     """
+    model_manager.use_inpaint()
     pipeline = model_manager.get_inpaint()
     model_manager.set_sampler(pipeline, params.sampler)
 
