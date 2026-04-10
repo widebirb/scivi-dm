@@ -2,6 +2,10 @@ import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from dotenv import load_dotenv
+load_dotenv()  # must happen before router imports
+
 from app.routers import generate, inpaint, health
 
 USE_FAKE = os.getenv("USE_FAKE_INFERENCE", "true").lower() == "true"
