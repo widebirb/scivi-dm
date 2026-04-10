@@ -20,8 +20,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="JuggernautXL API",
-    description="Facial composite generation API.",
+    title="SCIVIDM API",
     version="0.2.0",
     lifespan=lifespan,
 )
@@ -46,7 +45,7 @@ app.include_router(health.router)
 @app.get("/")
 async def root():
     return {
-        "message": "JuggernautXL API is running",
+        "message": "API is running",
         "mode": "fake" if USE_FAKE else "real",
         "docs": "/docs",
     }
