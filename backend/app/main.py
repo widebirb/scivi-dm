@@ -2,10 +2,6 @@ import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from dotenv import load_dotenv
-load_dotenv()  # must happen before router imports
-
 from app.routers import generate, inpaint, health
 
 USE_FAKE = os.getenv("USE_FAKE_INFERENCE", "true").lower() == "true"
@@ -24,7 +20,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="SCIVIDM API",
+    title="JuggernautXL API",
+    description="Facial composite generation API.",
     version="0.2.0",
     lifespan=lifespan,
 )
@@ -49,7 +46,7 @@ app.include_router(health.router)
 @app.get("/")
 async def root():
     return {
-        "message": " API is running",
+        "message": "JuggernautXL API is running",
         "mode": "fake" if USE_FAKE else "real",
         "docs": "/docs",
     }
