@@ -3,22 +3,23 @@ export default function GeneratingOverlay({ visible, elapsed = 0 }) {
 
     return (
         <div
-            className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded z-10"
+            className="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded z-10"
             style={{ backgroundColor: "rgba(244,244,245,0.88)" }}
         >
-            <div className="w-32 h-px rounded overflow-hidden" style={{ backgroundColor: "var(--border)" }}>
-                <div
-                    className="h-full rounded"
-                    style={{ backgroundColor: "var(--accent)", animation: "slide 1.4s ease-in-out infinite" }}
-                />
-            </div>
-            <p className="text-xs uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>generating</p>
+            <div 
+                className="w-7 h-7 rounded-full mb-1" 
+                style={{ 
+                    border: "2px solid var(--border-dim)", 
+                    borderTopColor: "var(--text)", 
+                    animation: "spin 0.8s linear infinite" 
+                }}
+            />
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em]" style={{ color: "var(--text-dim)" }}>generating</p>
             <p className="text-xs" style={{ color: "var(--text-muted)" }}>{elapsed}s</p>
             <style>{`
-        @keyframes slide {
-          0%   { transform: translateX(-100%); width: 60%; }
-          50%  { transform: translateX(120%);  width: 60%; }
-          100% { transform: translateX(120%);  width: 60%; }
+        @keyframes spin {
+          0%   { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
       `}</style>
         </div>

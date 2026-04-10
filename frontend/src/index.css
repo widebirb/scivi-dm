@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Replace your current @import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +8,8 @@
 
 /* ── Base tokens ── */
 :root {
-    --font-mono: 'IBM Plex Mono', 'JetBrains Mono', monospace;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    /* swap in your pick */
     --bg: #f4f4f5;
     --bg-surface: #ffffff;
     --bg-raised: #e4e4e7;
@@ -14,7 +17,7 @@
     --border-dim: #e4e4e7;
     --text: #18181b;
     --text-dim: #52525b;
-    --text-muted: #a1a1aa;
+    --text-muted: #757589;
 }
 
 /* ── Colored theme ── */
@@ -61,7 +64,7 @@ body,
     height: 100%;
     background-color: var(--bg);
     color: var(--text);
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
 }
 
 ::-webkit-scrollbar {
@@ -151,4 +154,49 @@ body,
     left: calc(100% + 8px);
     bottom: auto;
     transform: translateY(-50%);
+}
+
+/* ── Custom Range Sliders ── */
+input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    width: 100%;
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 9999px;
+    transition: background 0.2s;
+}
+
+input[type=range]:hover::-webkit-slider-runnable-track {
+    background: var(--border-dim); 
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    background: var(--text);
+    margin-top: -5px; /* (Track height / 2) - (Thumb height / 2) */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: transform 0.1s;
+}
+
+input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+input[type=range]:active::-webkit-slider-thumb {
+    transform: scale(0.9);
 }

@@ -66,13 +66,29 @@ export default function VersionControl({ versions, activeVersion, onRollback, on
 
                         {isExpanded && (
                             <div
-                                className="px-2 pb-2 pt-1.5 text-xs space-y-0.5 border-t"
-                                style={{ borderColor: "var(--border-dim)", color: "var(--text-muted)" }}
+                                className="px-2 pb-2 pt-2 space-y-1.5 border-t"
+                                style={{ borderColor: "var(--border-dim)" }}
                             >
-                                <p style={{ color: "var(--text-dim)" }}>{v.parameters.prompt || "—"}</p>
-                                <p>seed <span style={{ color: "var(--accent-text)" }}>{v.parameters.seed}</span></p>
-                                <p>{v.parameters.width}×{v.parameters.height} · {v.parameters.steps}st · cfg{v.parameters.cfg_scale}</p>
-                                {v.parentId && <p>↳ branched</p>}
+                                <p style={{ color: "var(--text-dim)" }} className="text-xs leading-relaxed">{v.parameters.prompt || "—"}</p>
+                                <div className="flex flex-wrap gap-1.5 pt-0.5">
+                                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded border" style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--border-dim)" }}>
+                                        <span className="text-[9px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>Seed</span>
+                                        <span className="text-[10px] font-mono" style={{ color: "var(--accent-text)" }}>{v.parameters.seed}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded border" style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--border-dim)" }}>
+                                        <span className="text-[9px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>Steps</span>
+                                        <span className="text-[10px] font-mono" style={{ color: "var(--text-dim)" }}>{v.parameters.steps}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded border" style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--border-dim)" }}>
+                                        <span className="text-[9px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>CFG</span>
+                                        <span className="text-[10px] font-mono" style={{ color: "var(--text-dim)" }}>{v.parameters.cfg_scale}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1 px-1.5 py-0.5 rounded border" style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--border-dim)" }}>
+                                        <span className="text-[9px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>Res</span>
+                                        <span className="text-[10px] font-mono" style={{ color: "var(--text-dim)" }}>{v.parameters.width}×{v.parameters.height}</span>
+                                    </div>
+                                </div>
+                                {v.parentId && <p className="text-[10px] pt-1" style={{ color: "var(--text-muted)" }}>↳ branched</p>}
                             </div>
                         )}
                     </div>

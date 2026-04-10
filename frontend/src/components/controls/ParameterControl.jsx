@@ -62,7 +62,7 @@ export default function ParameterControl({ onChange, disabled = false }) {
         RESOLUTIONS.find((r) => r.width === params.width && r.height === params.height)?.label || "Custom";
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
 
             <SectionLabel>Generation</SectionLabel>
 
@@ -118,25 +118,23 @@ export default function ParameterControl({ onChange, disabled = false }) {
                 </Select>
             </Field>
 
-            <Field label={`Steps — ${params.steps}`} tooltip={TOOLTIPS.steps}>
+            <Field label="Steps" tooltip={TOOLTIPS.steps} valueReadout={params.steps}>
                 <input
                     type="range" min={1} max={150} step={1}
                     value={params.steps}
                     onChange={(e) => update("steps", Number(e.target.value))}
                     disabled={disabled}
                     className="w-full disabled:opacity-40"
-                    style={{ accentColor: "var(--accent)" }}
                 />
             </Field>
 
-            <Field label={`CFG Scale — ${params.cfg_scale.toFixed(1)}`} tooltip={TOOLTIPS.cfg_scale}>
+            <Field label="CFG Scale" tooltip={TOOLTIPS.cfg_scale} valueReadout={params.cfg_scale.toFixed(1)}>
                 <input
                     type="range" min={1} max={30} step={0.5}
                     value={params.cfg_scale}
                     onChange={(e) => update("cfg_scale", Number(e.target.value))}
                     disabled={disabled}
                     className="w-full disabled:opacity-40"
-                    style={{ accentColor: "var(--accent)" }}
                 />
             </Field>
 
@@ -159,7 +157,6 @@ export default function ParameterControl({ onChange, disabled = false }) {
                     <IconButton onClick={randomizeSeed} disabled={disabled} title="randomize seed">↺</IconButton>
                     <IconButton onClick={() => update("seed", -1)} disabled={disabled} title="set to -1 (random)">−1</IconButton>
                 </div>
-                <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>-1 = random each run</p>
             </Field>
 
             {/* Reset */}
@@ -180,29 +177,61 @@ export default function ParameterControl({ onChange, disabled = false }) {
 
 function SectionLabel({ children }) {
     return (
-        <div className="flex items-center gap-2">
-            <span className="text-xs uppercase tracking-[0.15em]" style={{ color: "var(--text-muted)" }}>
+        <div className="flex items-center justify-center mb-1 mt-1">
+            <span className="text-sm uppercase tracking-[0.2em] font-semibold" style={{ color: "var(--text-dim)" }}>
                 {children}
             </span>
-            <div className="flex-1 h-px" style={{ backgroundColor: "var(--border-dim)" }} />
         </div>
     );
 }
 
-function Field({ label, tooltip, children }) {
+function Field({ label, tooltip, valueReadout, children }) {
     return (
-        <div className="flex flex-col min-w-0">
-            <div className="flex items-center gap-1.5">
-                <label className="text-xs uppercase tracking-wider" style={{ color: "var(--text-dim)" }}>
-                    {label}
-                </label>
-                {tooltip && (
-                    <div className="tooltip-wrap tooltip-right">
-                        <span className="text-xs cursor-default" style={{ color: "var(--text-muted)" }}>?</span>
-                        <span className="tooltip-box" style={{ maxWidth: "200px", whiteSpace: "normal", textAlign: "left" }}>
-                            {tooltip}
-                        </span>
-                    </div>
+        <div className="flex flex-col min-w-0 gap-2">
+            <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-1.5 min-w-0">
+                    <label className="text-xs uppercase tracking-wider font-medium truncate" style={{ color: "var(--text-dim)" }}>
+                        {label}
+                    </label>
+                    {tooltip && (
+                        <div className="tooltip-wrap relative shrink-0">
+                            <span 
+                                className="flex items-center justify-center text-[9px] font-bold w-[16px] h-[16px] rounded-full border cursor-help transition-colors" 
+                                style={{ 
+                                    color: "var(--text-muted)", 
+                                    borderColor: "var(--border)",
+                                }}
+                                onMouseEnter={(e) => { e.target.style.color = "var(--text)"; e.target.style.borderColor = "var(--text-dim)"; }}
+                                onMouseLeave={(e) => { e.target.style.color = "var(--text-muted)"; e.target.style.borderColor = "var(--border)"; }}
+                            >
+                                ?
+                            </span>
+                            <span 
+                                className="tooltip-box" 
+                                style={{ 
+                                    maxWidth: "200px", 
+                                    whiteSpace: "normal", 
+                                    textAlign: "left",
+                                    left: "0",
+                                    zIndex: 50
+                                }}
+                            >
+                                {tooltip}
+                            </span>
+                        </div>
+                    )}
+                </div>
+                {valueReadout && (
+                    <span 
+                        className="text-[11px] font-mono px-1.5 py-0.5 rounded shadow-sm border" 
+                        style={{ 
+                            backgroundColor: "var(--bg-surface)", 
+                            borderColor: "var(--border-dim)", 
+                            color: "var(--accent-text)" 
+                        }}
+                    >
+                        {valueReadout}
+                    </span>
                 )}
             </div>
             {children}
