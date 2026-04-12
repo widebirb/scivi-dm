@@ -48,11 +48,37 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
     const exportMask = useCallback(() => {
         const stage = stageRef.current;
         if (!stage) return null;
-        imageLayerRef.current.hide();
-        const dataURL = stage.toDataURL({ mimeType: "image/png", pixelRatio: 1 });
-        imageLayerRef.current.show();
-        return dataURL;
-    }, []);
+
+        // Create an offscreen canvas, same size as the stage
+        const offscreen = document.createElement("canvas");
+        offscreen.width = CANVAS_SIZE;
+        offscreen.height = CANVAS_SIZE;
+        const ctx = offscreen.getContext("2d");
+
+        // Fill black background, this is the "keep" area
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+        // Draw each stroke as pure white, this is the "repaint" area
+        lines.forEach((line) => {
+            if (line.tool === "erase") return; // erased areas stay black
+            if (line.points.length < 2) return;
+
+            ctx.beginPath();
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = line.brushSize;
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
+
+            ctx.moveTo(line.points[0], line.points[1]);
+            for (let i = 2; i < line.points.length; i += 2) {
+                ctx.lineTo(line.points[i], line.points[i + 1]);
+            }
+            ctx.stroke();
+        });
+
+        return offscreen.toDataURL("image/png");
+    }, [lines]);
 
     function handleInpaintSubmit() {
         if (!hasMask) return;
