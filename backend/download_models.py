@@ -18,6 +18,9 @@ import requests
 from pathlib import Path
 from huggingface_hub import snapshot_download
 
+from dotenv import load_dotenv
+load_dotenv()
+
 MODELS_DIR = Path(os.getenv("MODEL_PATH", "/workspace/models"))
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
