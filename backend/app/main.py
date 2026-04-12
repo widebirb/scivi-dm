@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from dotenv import load_dotenv
-load_dotenv()  # must happen before router imports
+load_dotenv(override=True)  # must happen before router imports
 
 from app.routers import generate, inpaint, health
 
