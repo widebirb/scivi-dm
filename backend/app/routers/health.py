@@ -10,5 +10,5 @@ async def health():
     return {
         "status": "ok",
         "mode": "fake" if USE_FAKE else "real",
-        "models_loaded": False if USE_FAKE else model_manager.is_loaded(),
+        "models_loaded": False if USE_FAKE else model_manager.is_loaded,
     }
