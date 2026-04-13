@@ -15,6 +15,7 @@ export default function App() {
     const {
         isLoading, error,
         activeVersion, versions,
+        parameters,
         setParameters, handleGenerate, handleInpaint, // much cleaner
         rollback, clear,
     } = useGeneration();
@@ -65,7 +66,7 @@ export default function App() {
                         style={{ borderColor: "var(--border-dim)", backgroundColor: "var(--bg-surface)" }}
                     >
                         <div className="flex-1 p-4">
-                            <ParameterControl onChange={setParameters} disabled={isLoading} />
+                            <ParameterControl value={parameters} onChange={setParameters} disabled={isLoading} />
                         </div>
 
                         {/* Generate Button */}
@@ -253,6 +254,13 @@ export default function App() {
             <PromptBuilder
                 isOpen={promptBuilderOpen}
                 onClose={() => setPromptBuilderOpen(false)}
+                onApply={(prompt, negativePrompt) => {
+                    setParameters((prev) => {
+                        const base = prev || { width: 512, height: 512, sampler: "DPM++ 2M Karras", steps: 20, cfg_scale: 7, seed: -1 };
+                        return { ...base, prompt, negative_prompt: negativePrompt || "" };
+                    });
+                    setPromptBuilderOpen(false);
+                }}
             />
         </div>
     );

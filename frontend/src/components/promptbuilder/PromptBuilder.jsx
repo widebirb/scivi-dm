@@ -2,7 +2,7 @@ import { useState } from "react";
 import GenerationMode from "./GenerationMode";
 import InpaintingMode from "./InpaintingMode";
 
-export default function PromptBuilder({ isOpen, onClose }) {
+export default function PromptBuilder({ isOpen, onClose, onApply }) {
     const [mode, setMode] = useState("generation"); // "generation" | "inpainting"
     const [copied, setCopied] = useState(false);
 
@@ -94,8 +94,8 @@ export default function PromptBuilder({ isOpen, onClose }) {
 
                 {/* Body */}
                 <div className="flex-1 overflow-hidden p-5">
-                    {mode === "generation" && <GenerationMode onCopy={handleCopy} />}
-                    {mode === "inpainting" && <InpaintingMode onCopy={handleCopy} />}
+                    {mode === "generation" && <GenerationMode onCopy={handleCopy} onApply={onApply} />}
+                    {mode === "inpainting" && <InpaintingMode onCopy={handleCopy} onApply={onApply} />}
                 </div>
 
             </div>

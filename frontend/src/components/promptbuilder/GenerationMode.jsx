@@ -18,7 +18,7 @@ function assembleChunk(tags, freeText) {
 let tagIdCounter = 0;
 function newTagId() { return `tag_${++tagIdCounter}`; }
 
-export default function GenerationMode({ onCopy }) {
+export default function GenerationMode({ onCopy, onApply }) {
     // Each chunk: { text: string, tags: [{ id, label, weight }] }
     const [chunks, setChunks] = useState(
         Object.fromEntries(CHUNKS.map((c) => [c.id, { text: "", tags: [] }]))
@@ -298,13 +298,35 @@ export default function GenerationMode({ onCopy }) {
                     <p style={{ color: "var(--text-dim)" }}>· Each chip gets its own weight: <code>(keyword:1.4)</code> - correct syntax</p>
                 </div>
 
-                <button
-                    onClick={handleCopy}
-                    disabled={!fullPrompt}
-                    className="w-full py-2.5 rounded text-sm font-semibold uppercase tracking-wider btn-generate disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                    Copy Prompt
-                </button>
+                <div className="flex gap-2 w-full">
+                    <button
+                        onClick={handleCopy}
+                        disabled={!fullPrompt}
+                        className="flex-1 py-2.5 rounded text-sm font-semibold uppercase tracking-wider btn-generate disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                        Copy Prompt
+                    </button>
+                    <button
+                        onClick={() => onApply?.(fullPrompt, negativePrompt)}
+                        disabled={!fullPrompt}
+                        className="flex-1 py-2.5 rounded text-sm font-semibold uppercase tracking-wider transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                        style={{ backgroundColor: "var(--accent-dim)", color: "var(--accent-text)", border: "1px solid var(--accent)" }}
+                        onMouseEnter={(e) => {
+                            if (fullPrompt) {
+                                e.currentTarget.style.backgroundColor = "var(--accent)";
+                                e.currentTarget.style.color = "var(--generate-text)";
+                            }
+                        }}
+                        onMouseLeave={(e) => {
+                            if (fullPrompt) {
+                                e.currentTarget.style.backgroundColor = "var(--accent-dim)";
+                                e.currentTarget.style.color = "var(--accent-text)";
+                            }
+                        }}
+                    >
+                        Apply Prompt
+                    </button>
+                </div>
             </div>
         </div>
     );

@@ -8,7 +8,7 @@ function buildNegativeTag(text, weight) {
     return `(${text.trim()}:${weight.toFixed(1)})`;
 }
 
-export default function InpaintingMode({ onCopy }) {
+export default function InpaintingMode({ onCopy, onApply }) {
     const [variations, setVariations] = useState([""]);
     const [negTags, setNegTags] = useState([{ text: "", weight: 1 }]);
 
@@ -255,13 +255,35 @@ export default function InpaintingMode({ onCopy }) {
                     <p style={{ color: "var(--text-dim)" }}>· Weight negatives aggressively: <code>teeth:1.7</code> not just <code>teeth</code></p>
                 </div>
 
-                <button
-                    onClick={handleCopy}
-                    disabled={!assembledPrompt}
-                    className="w-full py-2.5 rounded text-sm font-semibold uppercase tracking-wider btn-generate disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                    Copy Prompt
-                </button>
+                <div className="flex gap-2 w-full">
+                    <button
+                        onClick={handleCopy}
+                        disabled={!assembledPrompt}
+                        className="flex-1 py-2.5 rounded text-sm font-semibold uppercase tracking-wider btn-generate disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                        Copy Prompt
+                    </button>
+                    <button
+                        onClick={() => onApply?.(assembledPrompt, assembledNegative)}
+                        disabled={!assembledPrompt}
+                        className="flex-1 py-2.5 rounded text-sm font-semibold uppercase tracking-wider transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                        style={{ backgroundColor: "var(--accent-dim)", color: "var(--accent-text)", border: "1px solid var(--accent)" }}
+                        onMouseEnter={(e) => {
+                            if (assembledPrompt) {
+                                e.currentTarget.style.backgroundColor = "var(--accent)";
+                                e.currentTarget.style.color = "var(--generate-text)";
+                            }
+                        }}
+                        onMouseLeave={(e) => {
+                            if (assembledPrompt) {
+                                e.currentTarget.style.backgroundColor = "var(--accent-dim)";
+                                e.currentTarget.style.color = "var(--accent-text)";
+                            }
+                        }}
+                    >
+                        Apply Prompt
+                    </button>
+                </div>
             </div>
         </div>
     );

@@ -16,7 +16,7 @@ const RESOLUTIONS = [
     { label: "1024 × 1024", width: 1024, height: 1024 },
 ];
 
-const DEFAULTS = {
+export const DEFAULTS = {
     prompt: "",
     negative_prompt: "",
     width: 512,
@@ -37,12 +37,11 @@ const TOOLTIPS = {
     seed: "Controls randomness. Same seed + same params = same image. -1 = random.",
 };
 
-export default function ParameterControl({ onChange, disabled = false }) {
-    const [params, setParams] = useState(DEFAULTS);
+export default function ParameterControl({ value, onChange, disabled = false }) {
+    const params = value || DEFAULTS;
 
-    function update(field, value) {
-        const next = { ...params, [field]: value };
-        setParams(next);
+    function update(field, val) {
+        const next = { ...params, [field]: val };
         onChange?.(next);
     }
 
@@ -50,7 +49,6 @@ export default function ParameterControl({ onChange, disabled = false }) {
         const res = RESOLUTIONS.find((r) => r.label === e.target.value);
         if (!res) return;
         const next = { ...params, width: res.width, height: res.height };
-        setParams(next);
         onChange?.(next);
     }
 
@@ -78,6 +76,7 @@ export default function ParameterControl({ onChange, disabled = false }) {
                         backgroundColor: "var(--bg-raised)",
                         border: "1px solid var(--border)",
                         color: "var(--text)",
+                        height: "50px",
                     }}
                     onFocus={(e) => e.target.style.borderColor = "var(--accent)"}
                     onBlur={(e) => e.target.style.borderColor = "var(--border)"}
@@ -161,7 +160,7 @@ export default function ParameterControl({ onChange, disabled = false }) {
 
             {/* Reset */}
             <button
-                onClick={() => { setParams(DEFAULTS); onChange?.(DEFAULTS); }}
+                onClick={() => { onChange?.(DEFAULTS); }}
                 disabled={disabled}
                 className="text-xs text-left transition-colors disabled:opacity-30"
                 style={{ color: "var(--text-muted)" }}
@@ -195,10 +194,10 @@ function Field({ label, tooltip, valueReadout, children }) {
                     </label>
                     {tooltip && (
                         <div className="tooltip-wrap relative shrink-0">
-                            <span 
-                                className="flex items-center justify-center text-[9px] font-bold w-[16px] h-[16px] rounded-full border cursor-help transition-colors" 
-                                style={{ 
-                                    color: "var(--text-muted)", 
+                            <span
+                                className="flex items-center justify-center text-[9px] font-bold w-[16px] h-[16px] rounded-full border cursor-help transition-colors"
+                                style={{
+                                    color: "var(--text-muted)",
                                     borderColor: "var(--border)",
                                 }}
                                 onMouseEnter={(e) => { e.target.style.color = "var(--text)"; e.target.style.borderColor = "var(--text-dim)"; }}
@@ -206,11 +205,11 @@ function Field({ label, tooltip, valueReadout, children }) {
                             >
                                 ?
                             </span>
-                            <span 
-                                className="tooltip-box" 
-                                style={{ 
-                                    maxWidth: "200px", 
-                                    whiteSpace: "normal", 
+                            <span
+                                className="tooltip-box"
+                                style={{
+                                    maxWidth: "200px",
+                                    whiteSpace: "normal",
                                     textAlign: "left",
                                     left: "0",
                                     zIndex: 50
@@ -222,12 +221,12 @@ function Field({ label, tooltip, valueReadout, children }) {
                     )}
                 </div>
                 {valueReadout && (
-                    <span 
-                        className="text-[11px] font-mono px-1.5 py-0.5 rounded shadow-sm border" 
-                        style={{ 
-                            backgroundColor: "var(--bg-surface)", 
-                            borderColor: "var(--border-dim)", 
-                            color: "var(--accent-text)" 
+                    <span
+                        className="text-[11px] font-mono px-1.5 py-0.5 rounded shadow-sm border"
+                        style={{
+                            backgroundColor: "var(--bg-surface)",
+                            borderColor: "var(--border-dim)",
+                            color: "var(--accent-text)"
                         }}
                     >
                         {valueReadout}
