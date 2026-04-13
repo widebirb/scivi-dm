@@ -1,6 +1,7 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { Stage, Layer, Image as KonvaImage, Line, Rect } from "react-konva";
 import useImage from "use-image";
+import Konva from "konva";
 
 const CANVAS_SIZE = 512;
 const MIN_BRUSH = 4;
@@ -9,14 +10,37 @@ const MAX_BRUSH = 80;
 export default function CompositeCanvas({ imageData, onInpaint, disabled = false }) {
     const stageRef = useRef(null);
     const imageLayerRef = useRef(null);
+    const mainImageRef = useRef(null);
 
     const [tool, setTool] = useState("paint");
     const [brushSize, setBrushSize] = useState(20);
     const [isDrawing, setIsDrawing] = useState(false);
     const [lines, setLines] = useState([]);
     const [hasMask, setHasMask] = useState(false);
+    const [isGrayscale, setIsGrayscale] = useState(false);
 
     const [konvaImage] = useImage(imageData || "");
+
+    useEffect(() => {
+        if (mainImageRef.current) {
+            if (isGrayscale) {
+                mainImageRef.current.cache();
+            } else {
+                mainImageRef.current.clearCache();
+            }
+        }
+    }, [isGrayscale, konvaImage]);
+
+    const handleExport = useCallback(() => {
+        if (!stageRef.current) return;
+        const uri = stageRef.current.toDataURL({ pixelRatio: 1 });
+        const link = document.createElement("a");
+        link.download = "scivi-export.png";
+        link.href = uri;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }, []);
 
     function getPointerPos() {
         return stageRef.current.getPointerPosition();
@@ -130,6 +154,18 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
                     <span className="w-6 text-right" style={{ color: "var(--text-dim)" }}>{brushSize}</span>
                 </div>
 
+                {/* Filters */}
+                <button
+                    onClick={() => setIsGrayscale((prev) => !prev)}
+                    disabled={!imageData || disabled}
+                    className="text-xs transition-colors disabled:opacity-30 w-10 text-center"
+                    style={{ color: isGrayscale ? "var(--accent)" : "var(--text-muted)" }}
+                    onMouseEnter={(e) => { if (!isGrayscale) e.target.style.color = "var(--text)"; }}
+                    onMouseLeave={(e) => { if (!isGrayscale) e.target.style.color = "var(--text-muted)"; }}
+                >
+                    {isGrayscale ? "color" : "gray"}
+                </button>
+
                 <button
                     onClick={clearMask}
                     disabled={disabled || !hasMask}
@@ -139,6 +175,17 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
                     onMouseLeave={(e) => e.target.style.color = "var(--text-muted)"}
                 >
                     clear
+                </button>
+
+                <button
+                    onClick={handleExport}
+                    disabled={!imageData || disabled}
+                    className="text-xs transition-colors disabled:opacity-30"
+                    style={{ color: "var(--text-muted)" }}
+                    onMouseEnter={(e) => e.target.style.color = "var(--text)"}
+                    onMouseLeave={(e) => e.target.style.color = "var(--text-muted)"}
+                >
+                    export
                 </button>
             </div>
 
@@ -164,7 +211,13 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
                 >
                     <Layer ref={imageLayerRef}>
                         {konvaImage ? (
-                            <KonvaImage image={konvaImage} width={CANVAS_SIZE} height={CANVAS_SIZE} />
+                            <KonvaImage
+                                ref={mainImageRef}
+                                image={konvaImage}
+                                width={CANVAS_SIZE}
+                                height={CANVAS_SIZE}
+                                filters={isGrayscale ? [Konva.Filters.Grayscale] : []}
+                            />
                         ) : (
                             <Rect width={CANVAS_SIZE} height={CANVAS_SIZE} fill="#e4e4e7" />
                         )}
