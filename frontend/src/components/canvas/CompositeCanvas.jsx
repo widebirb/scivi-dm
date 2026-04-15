@@ -73,15 +73,23 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
         const stage = stageRef.current;
         if (!stage) return null;
 
-        // Create an offscreen canvas, same size as the stage
+        // Use the actual image resolution as the mask size so they always match
+        const maskW = konvaImage ? konvaImage.naturalWidth || konvaImage.width : CANVAS_SIZE;
+        const maskH = konvaImage ? konvaImage.naturalHeight || konvaImage.height : CANVAS_SIZE;
+
+        // Scale factor from canvas display coords → actual image pixels
+        const scaleX = maskW / CANVAS_SIZE;
+        const scaleY = maskH / CANVAS_SIZE;
+
+        // Create an offscreen canvas at the real image resolution
         const offscreen = document.createElement("canvas");
-        offscreen.width = CANVAS_SIZE;
-        offscreen.height = CANVAS_SIZE;
+        offscreen.width = maskW;
+        offscreen.height = maskH;
         const ctx = offscreen.getContext("2d");
 
         // Fill black background, this is the "keep" area
         ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+        ctx.fillRect(0, 0, maskW, maskH);
 
         // Draw each stroke as pure white, this is the "repaint" area
         lines.forEach((line) => {
@@ -90,19 +98,19 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
 
             ctx.beginPath();
             ctx.strokeStyle = "white";
-            ctx.lineWidth = line.brushSize;
+            ctx.lineWidth = line.brushSize * Math.max(scaleX, scaleY);
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
 
-            ctx.moveTo(line.points[0], line.points[1]);
+            ctx.moveTo(line.points[0] * scaleX, line.points[1] * scaleY);
             for (let i = 2; i < line.points.length; i += 2) {
-                ctx.lineTo(line.points[i], line.points[i + 1]);
+                ctx.lineTo(line.points[i] * scaleX, line.points[i + 1] * scaleY);
             }
             ctx.stroke();
         });
 
         return offscreen.toDataURL("image/png");
-    }, [lines]);
+    }, [lines, konvaImage]);
 
     function handleInpaintSubmit() {
         if (!hasMask) return;
