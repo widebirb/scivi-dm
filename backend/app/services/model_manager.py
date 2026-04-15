@@ -25,8 +25,9 @@ class ModelManager:
     Loading takes ~30-60 seconds. Doing it at startup means the first user request isn't penalized. 
 
     VRAM strategy (for ~12GB GPUs):
-    Both SDXL pipelines together exceed 11GB at float16, so we never keep both on GPU simultaneously. Instead we swap on demand —
-    calling use_base() or use_inpaint() before inference moves the active pipeline to GPU and offloads the other to CPU RAM. The swap costs ~2-4 seconds but prevents OOM entirely.
+    Both SDXL pipelines together exceed 11GB at float16, so we never keep both on GPU simultaneously. 
+    Instead we swap on demand by calling use_base() or use_inpaint() before inference moves the active pipeline to GPU 
+    and offloads the other to CPU RAM. The swap costs ~2-4 seconds but prevents OOM entirely.
     """
     def __init__(self):
         self.base_pipeline: diffusers.StableDiffusionXLPipeline | None = None
@@ -41,7 +42,7 @@ class ModelManager:
     def load(self):
         print(f"Loading models on {self.device}...")
 
-        # Base model — downloads from HuggingFace Hub on first run then caches to ~/.cache/huggingface. Subsequent starts are fast.
+        # downloads from HuggingFace Hub on first run then caches to ~/.cache/huggingface. Subsequent starts are fast.
         print("Loading base model from HuggingFace Hub...")
         self.base_pipeline = diffusers.StableDiffusionXLPipeline.from_pretrained(
             BASE_MODEL_ID,
@@ -50,7 +51,6 @@ class ModelManager:
             variant="fp16",
         )
 
-        # Inpainting model — loaded from local .safetensors file (CivitAI download).
         # config= provides the architecture scaffold so from_single_file knows the exact UNet shape, avoiding the proj_in weight shape mismatch.
         print(f"Loading inpainting model from {INPAINT_MODEL_PATH}...")
         self.inpaint_pipeline = diffusers.StableDiffusionXLInpaintPipeline.from_single_file(
@@ -126,6 +126,5 @@ class ModelManager:
         return self.inpaint_pipeline
 
 
-# Module-level singleton — imported by routers
 # Same pattern as versionStore on the frontend
 model_manager = ModelManager()
