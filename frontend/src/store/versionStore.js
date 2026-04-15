@@ -12,13 +12,14 @@ export function subscribe(fn) {
     };
 }
 
-export function saveVersion({ versionId, imageData, parameters, parentId = null }) {
+export function saveVersion({ versionId, imageData, parameters, parentId = null, generationTime = null }) {
     const version = {
         versionId,
         timestamp: new Date().toISOString(),
         imageData,
         parameters,
         parentId,
+        generationTime,
         label: `v${versions.length + 1} — ${parameters.prompt.slice(0, 30) || "no prompt"}`,
     };
     versions = [...versions, version];

@@ -114,24 +114,31 @@ export default function App() {
                             {/* Metadata Chips */}
                             {activeVersion && (
                                 <div
-                                    className="flex flex-wrap gap-2 pb-3"
+                                    className="flex gap-4 pb-3"
                                     style={{ borderBottom: "1px solid var(--border-dim)" }}
                                 >
+                                    {activeVersion.generationTime && (
+                                        <div className="flex items-center gap-1.5 px-2 py-1 rounded border-2" style={{ borderColor: "green" }}>
+                                            <span className="text-[12px] uppercase font-bold tracking-wider" style={{ color: "green" }}>Time</span>
+                                            <span className="text-[12px] font-bold tracking-wider" style={{ color: "green" }}>{activeVersion.generationTime.toFixed(2)}s</span>
+                                        </div>
+                                    )}
+
                                     <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border" style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--border-dim)" }}>
                                         <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>Seed</span>
-                                        <span className="text-xs font-mono" style={{ color: "var(--accent-text)" }}>{activeVersion.parameters.seed}</span>
+                                        <span className="text-xs font-mono" style={{ color: "var(--accent2-text)" }}>{activeVersion.parameters.seed}</span>
                                     </div>
                                     <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border" style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--border-dim)" }}>
                                         <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>Steps</span>
-                                        <span className="text-xs font-mono" style={{ color: "var(--text-dim)" }}>{activeVersion.parameters.steps}</span>
+                                        <span className="text-xs font-mono" style={{ color: "var(--accent2-text)" }}>{activeVersion.parameters.steps}</span>
                                     </div>
                                     <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border" style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--border-dim)" }}>
                                         <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>CFG</span>
-                                        <span className="text-xs font-mono" style={{ color: "var(--text-dim)" }}>{activeVersion.parameters.cfg_scale}</span>
+                                        <span className="text-xs font-mono" style={{ color: "var(--accent2-text)" }}>{activeVersion.parameters.cfg_scale}</span>
                                     </div>
                                     <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border" style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--border-dim)" }}>
                                         <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>Res</span>
-                                        <span className="text-xs font-mono" style={{ color: "var(--text-dim)" }}>{activeVersion.parameters.width}×{activeVersion.parameters.height}</span>
+                                        <span className="text-xs font-mono" style={{ color: "var(--accent2-text)" }}>{activeVersion.parameters.width}×{activeVersion.parameters.height}</span>
                                     </div>
                                 </div>
                             )}
@@ -190,10 +197,10 @@ export default function App() {
                                     How to inpaint
                                 </span>
                                 <div className="tooltip-wrap relative">
-                                    <span 
-                                        className="flex items-center justify-center text-[9px] font-bold w-[16px] h-[16px] rounded-full border cursor-help transition-colors" 
-                                        style={{ 
-                                            color: "var(--text-muted)", 
+                                    <span
+                                        className="flex items-center justify-center text-[9px] font-bold w-[16px] h-[16px] rounded-full border cursor-help transition-colors"
+                                        style={{
+                                            color: "var(--text-muted)",
                                             borderColor: "var(--border)",
                                         }}
                                         onMouseEnter={(e) => { e.target.style.color = "var(--text)"; e.target.style.borderColor = "var(--text-dim)"; }}
@@ -201,11 +208,11 @@ export default function App() {
                                     >
                                         ?
                                     </span>
-                                    <span 
-                                        className="tooltip-box" 
-                                        style={{ 
-                                            maxWidth: "180px", 
-                                            whiteSpace: "normal", 
+                                    <span
+                                        className="tooltip-box"
+                                        style={{
+                                            maxWidth: "180px",
+                                            whiteSpace: "normal",
                                             textAlign: "left",
                                             right: 0,
                                             left: "auto",
@@ -236,7 +243,7 @@ export default function App() {
                         </div>
                         <p className="text-sm leading-relaxed" style={{ color: "var(--text-dim)" }}>{localError}</p>
                         <div className="flex justify-end mt-2">
-                            <button 
+                            <button
                                 onClick={() => setLocalError(null)}
                                 className="px-4 py-2 rounded text-xs font-semibold uppercase tracking-wider transition-colors"
                                 style={{ backgroundColor: "var(--bg-raised)", color: "var(--text)" }}

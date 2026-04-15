@@ -87,6 +87,12 @@ export default function VersionControl({ versions, activeVersion, onRollback, on
                                         <span className="text-[9px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>Res</span>
                                         <span className="text-[10px] font-mono" style={{ color: "var(--text-dim)" }}>{v.parameters.width}×{v.parameters.height}</span>
                                     </div>
+                                    {v.generationTime && (
+                                        <div className="flex items-center gap-1 px-1.5 py-0.5 rounded border-2" style={{ borderColor: "green" }}>
+                                            <span className="text-[9px] uppercase font-bold tracking-wider" style={{ color: "green" }}>Time</span>
+                                            <span className="text-[10px] font-bold tracking-wider" style={{ color: "green" }}>{v.generationTime.toFixed(2)}s</span>
+                                        </div>
+                                    )}
                                 </div>
                                 {v.parentId && <p className="text-[10px] pt-1" style={{ color: "var(--text-muted)" }}>↳ branched</p>}
                             </div>
