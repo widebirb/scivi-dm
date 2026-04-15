@@ -29,8 +29,8 @@ def _resolve_seed(seed: int) -> tuple[int, torch.Generator]:
 async def real_generate(params: GenerationParameters) -> dict:
     """
     txt2img inference using JuggernautXL base model.
-    This runs synchronously inside an async function — FastAPI handles
-    this fine for single-worker setups. For production multi-user you'd
+    This runs synchronously inside an async function 
+    FastAPI handles this fine for single-worker setups. For production multi-user you'd
     wrap in run_in_executor, but for Vast.ai single-user that's overkill.
     """
     model_manager.use_base()
