@@ -10,13 +10,13 @@ export default function Header({ onNavigate, currentPage }) {
             className="h-12 shrink-0 flex items-center justify-between px-5 border-b"
             style={{ borderColor: "var(--border-dim)", backgroundColor: "var(--bg-surface)" }}
         >
-            {/* Left — wordmark */}
+            {/* wordmark */}
             <div className="flex items-center gap-4">
                 <button
                     onClick={() => onNavigate(null)}
                     className="flex items-center gap-2 group"
                 >
-                    {/* Logo mark — two overlapping brackets, terminal-ish */}
+                    {/* two overlapping brackets, terminal-ish */}
                     <span
                         className="text-xs font-semibold tracking-[0.2em] uppercase transition-colors"
                         style={{ color: currentPage === null ? "var(--accent-text)" : "var(--text)" }}
@@ -34,7 +34,7 @@ export default function Header({ onNavigate, currentPage }) {
                 <StatusBar />
             </div>
 
-            {/* Right — nav + theme toggle */}
+            {/* nav + theme toggle */}
             <nav className="flex items-center gap-1">
                 {["guide", "about"].map((page) => (
                     <button

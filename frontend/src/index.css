@@ -104,7 +104,6 @@ body,
     cursor: not-allowed;
 }
 
-/* Tooltip — positioned BELOW to avoid header clipping */
 .tooltip-wrap {
     position: relative;
     display: inline-flex;
@@ -178,7 +177,7 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 
 input[type=range]:hover::-webkit-slider-runnable-track {
-    background: var(--border-dim); 
+    background: var(--border-dim);
 }
 
 input[type=range]::-webkit-slider-thumb {
@@ -188,8 +187,8 @@ input[type=range]::-webkit-slider-thumb {
     width: 14px;
     border-radius: 50%;
     background: var(--text);
-    margin-top: -5px; /* (Track height / 2) - (Thumb height / 2) */
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    margin-top: -5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     transition: transform 0.1s;
 }
 

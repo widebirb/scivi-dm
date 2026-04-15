@@ -180,7 +180,7 @@ export default function App() {
                         </div>
                     </main>
 
-                    {/* Right — inpaint params now*/}
+                    {/* inpaint params*/}
                     <aside
                         className="w-56 shrink-0 flex flex-col border rounded-xl shadow-sm overflow-y-auto p-4"
                         style={{ borderColor: "var(--border-dim)", backgroundColor: "var(--bg-surface)" }}
