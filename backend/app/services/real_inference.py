@@ -5,6 +5,7 @@ from PIL import Image
 
 
 from app.models.schemas import GenerationParameters, InpaintParameters
+from app.services.prompt_utils import build_prompt_embeds
 from app.services.model_manager import model_manager
 from app.services.image_processor import (
     decode_base64_image,
@@ -29,8 +30,7 @@ async def real_generate(params: GenerationParameters) -> dict:
     """
     txt2img inference using JuggernautXL base model.
     This runs synchronously inside an async function 
-    FastAPI handles this fine for single-worker setups. For production multi-user you'd
-    wrap in run_in_executor, but for Vast.ai single-user that's overkill.
+    FastAPI handles this fine for single-worker setups. 
     """
     model_manager.use_base()
     pipeline = model_manager.get_base()
@@ -38,12 +38,17 @@ async def real_generate(params: GenerationParameters) -> dict:
 
     resolved_seed, generator = _resolve_seed(params.seed)
 
+    prompt_embeds, neg_embeds, pooled, neg_pooled = build_prompt_embeds(
+        pipeline, params.prompt, params.negative_prompt, model_manager.device
+    )
 
     start = time.time()
 
     result = pipeline(
-        prompt=params.prompt,
-        negative_prompt=params.negative_prompt,
+        prompt_embeds=prompt_embeds,
+        negative_prompt_embeds=neg_embeds,
+        pooled_prompt_embeds=pooled,
+        negative_pooled_prompt_embeds=neg_pooled,
         width=params.width,
         height=params.height,
         num_inference_steps=params.steps,
@@ -87,6 +92,9 @@ async def real_inpaint(
 
     resolved_seed, generator = _resolve_seed(params.seed)
 
+    prompt_embeds, neg_embeds, pooled, neg_pooled = build_prompt_embeds(
+        pipeline, params.prompt, params.negative_prompt, model_manager.device
+    )
 
     # Decode both images from base64
     image = decode_base64_image(image_b64).convert("RGB")
@@ -107,8 +115,10 @@ async def real_inpaint(
     start = time.time()
 
     result = pipeline(
-        prompt=params.prompt,
-        negative_prompt=params.negative_prompt,
+        prompt_embeds=prompt_embeds,
+        negative_prompt_embeds=neg_embeds,
+        pooled_prompt_embeds=pooled,
+        negative_pooled_prompt_embeds=neg_pooled,
         image=image,
         mask_image=mask,
         width=params.width,

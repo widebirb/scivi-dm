@@ -9,7 +9,6 @@ import os
 
 from app.models.schemas import GenerationParameters, InpaintParameters
 
-
 def _make_placeholder_image(
     width: int,
     height: int,
@@ -18,9 +17,7 @@ def _make_placeholder_image(
     mode: str = "generate"
 ) -> str:
     """
-    Creates a placeholder image that communicates what WOULD have been generated.
-    Uses the seed to deterministically pick a background color so the same seed
-    always looks the same — mimics real model determinism.
+    Creates a placeholder image that shows what would have been generated.
     """
     random.seed(seed)
     r = random.randint(60, 180)
@@ -38,9 +35,9 @@ def _make_placeholder_image(
         f"Prompt: {label[:40]}{'...' if len(label) > 40 else ''}",
     ]
 
-    y = height // 2 - (len(lines) * 20) // 2
+    y = height // 2 - (len(lines) * 50) // 2
     for line in lines:
-        draw.text((20, y), line, fill=(255, 255, 255))
+        draw.text((50, y), line, fill=(255, 255, 255))
         y += 22
 
     buffer = BytesIO()
@@ -52,7 +49,6 @@ async def fake_generate(params: GenerationParameters) -> dict:
     """Simulates txt2img inference."""
     seed = params.seed if params.seed != -1 else random.randint(0, 2**32 - 1)
 
-    # Simulate inference time based on steps — more steps = longer wait
     # Real models scale roughly linearly with steps
     simulated_time = params.steps * 0.15
     await asyncio.sleep(simulated_time)

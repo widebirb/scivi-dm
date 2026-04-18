@@ -2,7 +2,6 @@ import os
 import torch
 import diffusers
 
-# Reduces CUDA memory fragmentation, must be set before any CUDA allocations
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 # /models is mounted from /workspace/models on Vast.ai
@@ -12,22 +11,14 @@ INPAINT_MODEL_PATH = os.getenv("INPAINT_MODEL_PATH", "/models/juggernaut-xl-inpa
 SAMPLERS = {
     "DPM++ 2M Karras":  ("DPMSolverMultistepScheduler", {"use_karras_sigmas": True}),
     "DPM++ SDE Karras": ("DPMSolverSDEScheduler",       {"use_karras_sigmas": True}),
-    "Euler a":          ("EulerAncestralDiscreteScheduler", {}),
-    "Euler":            ("EulerDiscreteScheduler",       {}),
-    "DDIM":             ("DDIMScheduler",                {}),
 }
 
 
 class ModelManager:
     """
-    Singleton-style service that owns both pipelines. Loaded once at startup, reused across all requests.
-
-    Loading takes ~30-60 seconds. Doing it at startup means the first user request isn't penalized. 
-
     VRAM strategy (for ~12GB GPUs):
     Both SDXL pipelines together exceed 11GB at float16, so we never keep both on GPU simultaneously. 
-    Instead we swap on demand by calling use_base() or use_inpaint() before inference moves the active pipeline to GPU 
-    and offloads the other to CPU RAM. The swap costs ~2-4 seconds but prevents OOM entirely.
+    Instead we swap on demand by calling use_base() or use_inpaint(). The swap costs ~2-4 seconds prevents OOM.
     """
     def __init__(self):
         self.base_pipeline: diffusers.StableDiffusionXLPipeline | None = None
@@ -46,12 +37,11 @@ class ModelManager:
         print("Loading base model from HuggingFace Hub...")
         self.base_pipeline = diffusers.StableDiffusionXLPipeline.from_pretrained(
             BASE_MODEL_ID,
-            torch_dtype=torch.float16,  # float16 is required for GPU VRAM efficiency
+            torch_dtype=torch.float16,  
             use_safetensors=True,
             variant="fp16",
         )
 
-        # config= provides the architecture scaffold so from_single_file knows the exact UNet shape, avoiding the proj_in weight shape mismatch.
         print(f"Loading inpainting model from {INPAINT_MODEL_PATH}...")
         self.inpaint_pipeline = diffusers.StableDiffusionXLInpaintPipeline.from_single_file(
             INPAINT_MODEL_PATH,

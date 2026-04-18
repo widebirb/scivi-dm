@@ -14,7 +14,6 @@ USE_FAKE = os.getenv("USE_FAKE_INFERENCE", "true").lower() == "true"
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Load models at startup if using real inference
-    # asynccontextmanager lifespan is the modern FastAPI pattern —
     # replaces the deprecated @app.on_event("startup")
     if not USE_FAKE:
         from app.services.model_manager import model_manager
