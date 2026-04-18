@@ -4,7 +4,6 @@ import torch
 from PIL import Image
 
 
-from compel import Compel, ReturnedEmbeddingsType
 from app.models.schemas import GenerationParameters, InpaintParameters
 from app.services.model_manager import model_manager
 from app.services.image_processor import (
@@ -39,21 +38,6 @@ async def real_generate(params: GenerationParameters) -> dict:
 
     resolved_seed, generator = _resolve_seed(params.seed)
 
-    # Compel handles both text encoders in SDXL, solves the 77 toke nlimitation of clip
-    compel = Compel(
-        tokenizer=[pipeline.tokenizer, pipeline.tokenizer_2],
-        text_encoder=[pipeline.text_encoder, pipeline.text_encoder_2],
-        returned_embeddings_type=ReturnedEmbeddingsType.PENULTIMATE_HIDDEN_STATES_NON_NORMALIZED,
-        requires_pooled=[False, True],
-    )
-
-    conditioning, pooled = compel(params.prompt)
-    neg_conditioning, neg_pooled = compel(params.negative_prompt)
-
-    # Pad to same length
-    [conditioning, neg_conditioning] = compel.pad_conditioning_tensors_to_same_length(
-        [conditioning, neg_conditioning]
-    )
 
     start = time.time()
 
@@ -103,19 +87,6 @@ async def real_inpaint(
 
     resolved_seed, generator = _resolve_seed(params.seed)
 
-    compel = Compel(
-        tokenizer=[pipeline.tokenizer, pipeline.tokenizer_2],
-        text_encoder=[pipeline.text_encoder, pipeline.text_encoder_2],
-        returned_embeddings_type=ReturnedEmbeddingsType.PENULTIMATE_HIDDEN_STATES_NON_NORMALIZED,
-        requires_pooled=[False, True],
-    )
-
-    conditioning, pooled = compel(params.prompt)
-    neg_conditioning, neg_pooled = compel(params.negative_prompt)
-
-    [conditioning, neg_conditioning] = compel.pad_conditioning_tensors_to_same_length(
-        [conditioning, neg_conditioning]
-    )
 
     # Decode both images from base64
     image = decode_base64_image(image_b64).convert("RGB")
