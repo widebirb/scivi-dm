@@ -142,12 +142,28 @@ def _encode_chunk(
 
     hidden = encoder_out.hidden_states[-2]  # [1, max_len, hidden_dim]
 
+    # Debug log weight application
+    non_one = [(i, w) for i, w in enumerate(token_weights) if abs(w - 1.0) > 1e-4]
+    if non_one:
+        norms_before = hidden[0].norm(dim=-1)
+        print(f"[WEIGHT_DEBUG] non-1.0 weights: {non_one}")
+        for pos, w in non_one:
+            print(f"  token pos={pos} weight={w:.2f} norm_before={norms_before[pos]:.4f}")
+
     weights_t = weights_t.to(hidden.dtype)
     original_mean = hidden.mean()
     hidden = hidden * weights_t
     new_mean = hidden.mean()
+    mean_ratio = (original_mean / new_mean).item() if new_mean.abs() > 1e-6 else 1.0
     if new_mean.abs() > 1e-6:
         hidden = hidden * (original_mean / new_mean)
+
+    if non_one:
+        norms_after = hidden[0].norm(dim=-1)
+        for pos, w in non_one:
+            print(f"  token pos={pos} norm_after={norms_after[pos]:.4f} ratio={norms_after[pos]/norms_before[pos]:.4f}")
+        print(f"  original_mean={original_mean.item():.6f} new_mean_pre_fix={new_mean.item():.6f} mean_ratio={mean_ratio:.6f}")
+    # End debug
 
     pooled: torch.Tensor | None = None
     if hasattr(text_encoder, "text_projection"):
@@ -158,6 +174,7 @@ def _encode_chunk(
         )                                            # [1, 1280]
 
     return hidden, pooled
+
 
 
 
