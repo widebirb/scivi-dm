@@ -112,14 +112,6 @@ def _build_causal_mask(bsz: int, seq_len: int, dtype: torch.dtype, device: str) 
     return mask
 
 
-def _build_causal_mask(bsz: int, seq_len: int, dtype: torch.dtype, device: str) -> torch.Tensor:
-    """Upper-triangular causal mask expected by CLIPEncoder (transformers < 4.40)."""
-    mask = torch.empty(bsz, 1, seq_len, seq_len, dtype=dtype, device=device)
-    mask.fill_(torch.finfo(dtype).min)
-    mask.triu_(1)
-    return mask
-
-
 def _encode_chunk(
     tokenizer,
     text_encoder,
@@ -131,22 +123,14 @@ def _encode_chunk(
     token_ids, token_weights = _tokenize_with_weights(tokenizer, weighted_parts, max_len)
     input_ids = torch.tensor([token_ids], dtype=torch.long, device=device)
     weights_t = torch.tensor([token_weights], device=device).unsqueeze(-1)  # [1, max_len, 1]
-    weights_t = torch.tensor([token_weights], device=device).unsqueeze(-1)  # [1, max_len, 1]
 
-    text_model = text_encoder.text_model
     text_model = text_encoder.text_model
 
     with torch.no_grad():
         bsz, seq_len = input_ids.shape
 
-        token_embeds = text_model.embeddings.token_embedding(input_ids)  # [1, max_len, dim]
-        token_embeds = token_embeds * weights_t.to(token_embeds.dtype)
-
-        position_ids = torch.arange(seq_len, device=device).unsqueeze(0)
-        position_embeds = text_model.embeddings.position_embedding(position_ids)
-
-        embeds = token_embeds + position_embeds  # [1, max_len, dim]
-
+        # Run CLIP normally
+        embeds = text_model.embeddings(input_ids=input_ids)
         causal_mask = _build_causal_mask(bsz, seq_len, embeds.dtype, device)
 
         encoder_out = text_model.encoder(
@@ -154,20 +138,17 @@ def _encode_chunk(
             causal_attention_mask=causal_mask,
             output_hidden_states=True,
             return_dict=True,
-            return_dict=True,
         )
 
-
-    hidden = encoder_out.hidden_states[-2]  # [1, max_len, hidden_dim]
     hidden = encoder_out.hidden_states[-2]  # [1, max_len, hidden_dim]
 
-    pooled: torch.Tensor | None = None
-    if hasattr(text_encoder, "text_projection"):
-        last_hidden = text_model.final_layer_norm(encoder_out.last_hidden_state)
-        eos_pos = input_ids.argmax(dim=-1)          # EOS has the highest token ID in CLIP
-        pooled = text_encoder.text_projection(
-            last_hidden[torch.arange(bsz, device=device), eos_pos]
-        )                                            # [1, 1280]
+    weights_t = weights_t.to(hidden.dtype)
+    original_mean = hidden.mean()
+    hidden = hidden * weights_t
+    new_mean = hidden.mean()
+    if new_mean.abs() > 1e-6:
+        hidden = hidden * (original_mean / new_mean)
+
     pooled: torch.Tensor | None = None
     if hasattr(text_encoder, "text_projection"):
         last_hidden = text_model.final_layer_norm(encoder_out.last_hidden_state)
