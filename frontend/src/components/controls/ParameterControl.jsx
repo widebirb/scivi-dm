@@ -19,8 +19,8 @@ const RESOLUTIONS = [
 export const DEFAULTS = {
     prompt: "",
     negative_prompt: "",
-    width: 512,
-    height: 512,
+    width: 1024,
+    height: 1024,
     sampler: "DPM++ 2M Karras",
     steps: 20,
     cfg_scale: 7,
@@ -76,7 +76,7 @@ export default function ParameterControl({ value, onChange, disabled = false }) 
                         backgroundColor: "var(--bg-raised)",
                         border: "1px solid var(--border)",
                         color: "var(--text)",
-                        height: "50px",
+                        height: "100px",
                     }}
                     onFocus={(e) => e.target.style.borderColor = "var(--accent)"}
                     onBlur={(e) => e.target.style.borderColor = "var(--border)"}
@@ -103,23 +103,24 @@ export default function ParameterControl({ value, onChange, disabled = false }) 
 
             <Field label="Resolution" tooltip={TOOLTIPS.resolution}>
                 <Select value={currentResLabel} onChange={handleResolution} disabled={disabled}>
-                    {RESOLUTIONS.map((r) => (
+                    {[...RESOLUTIONS].reverse().map((r) => (
                         <option key={r.label} value={r.label}>{r.label}</option>
                     ))}
                 </Select>
             </Field>
 
+            {/*             
             <Field label="Sampler" tooltip={TOOLTIPS.sampler}>
                 <Select value={params.sampler} onChange={(e) => update("sampler", e.target.value)} disabled={disabled}>
                     {SAMPLERS.map((s) => (
                         <option key={s} value={s}>{s}</option>
                     ))}
                 </Select>
-            </Field>
+            </Field> */}
 
             <Field label="Steps" tooltip={TOOLTIPS.steps} valueReadout={params.steps}>
                 <input
-                    type="range" min={1} max={150} step={1}
+                    type="range" min={1} max={40} step={1}
                     value={params.steps}
                     onChange={(e) => update("steps", Number(e.target.value))}
                     disabled={disabled}

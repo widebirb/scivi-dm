@@ -8,7 +8,6 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import GeneratingOverlay from "./components/GeneratingOverlay";
 import GuidePage from "./pages/GuidePage";
-import AboutPage from "./pages/AboutPage";
 import PromptBuilder from "./components/promptbuilder/PromptBuilder";
 
 export default function App() {
@@ -54,7 +53,6 @@ export default function App() {
 
             {/* Page routing */}
             {page === "guide" && <GuidePage />}
-            {page === "about" && <AboutPage />}
 
             {/* Main workspace */}
             {page === null && (
@@ -62,7 +60,7 @@ export default function App() {
 
                     {/* Left sdierbar */}
                     <aside
-                        className="w-80 shrink-0 flex flex-col overflow-y-auto overflow-x-hidden border rounded-xl shadow-sm"
+                        className="w-96 shrink-0 flex flex-col overflow-y-auto overflow-x-hidden border rounded-xl shadow-sm"
                         style={{ borderColor: "var(--border-dim)", backgroundColor: "var(--bg-surface)" }}
                     >
                         <div className="flex-1 p-4">
@@ -263,7 +261,7 @@ export default function App() {
                 onClose={() => setPromptBuilderOpen(false)}
                 onApply={(prompt, negativePrompt) => {
                     setParameters((prev) => {
-                        const base = prev || { width: 512, height: 512, sampler: "DPM++ 2M Karras", steps: 20, cfg_scale: 7, seed: -1 };
+                        const base = prev || { width: 1024, height: 1024, sampler: "DPM++ 2M Karras", steps: 20, cfg_scale: 7, seed: -1 };
                         return { ...base, prompt, negative_prompt: negativePrompt || "" };
                     });
                     setPromptBuilderOpen(false);

@@ -36,7 +36,7 @@ export default function Header({ onNavigate, currentPage }) {
 
             {/* nav + theme toggle */}
             <nav className="flex items-center gap-1">
-                {["guide", "about"].map((page) => (
+                {["guide"].map((page) => (
                     <button
                         key={page}
                         onClick={() => onNavigate(currentPage === page ? null : page)}
