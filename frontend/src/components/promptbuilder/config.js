@@ -3,8 +3,9 @@ export const CHUNKS = [
         id: "subject",
         label: "Subject",
         hint: "Chunk 1: Keywords at the start carry the most weight. Put subject, age, style here first.",
-        placeholder: "e.g. young adult woman, oval face, fair skin, photorealistic",
+        placeholder: "young adult woman, oval face, fair skin, photorealistic",
         suggestions: [
+            "solo", "headshot",
             "young adult", "middle-aged", "elderly",
             "woman", "man",
             "photorealistic", "hyperrealistic",
@@ -16,8 +17,8 @@ export const CHUNKS = [
     {
         id: "hair",
         label: "Hair",
-        hint: "Chunk 2: hair competes with face features if not separated.",
-        placeholder: "e.g. long straight black hair, side-swept bangs",
+        hint: "Chunk 2: Hair competes with face features if not separated.",
+        placeholder: "long straight black hair, side-swept bangs",
         suggestions: [
             "short hair", "medium hair", "long hair",
             "straight hair", "wavy hair", "curly hair", "coily hair",
@@ -29,8 +30,8 @@ export const CHUNKS = [
     {
         id: "eyes",
         label: "Eyes + Eyebrows",
-        hint: "Chunk 3: group eyes and brows together so they compete in the same attention window.",
-        placeholder: "e.g. almond-shaped brown eyes, thick arched eyebrows",
+        hint: "Chunk 3: Group eyes and brows together.",
+        placeholder: "almond-shaped brown eyes, thick arched eyebrows",
         suggestions: [
             "almond eyes", "round eyes", "monolid eyes", "hooded eyes",
             "brown eyes", "black eyes", "blue eyes", "green eyes", "hazel eyes",
@@ -41,8 +42,8 @@ export const CHUNKS = [
     {
         id: "nose",
         label: "Nose",
-        hint: "Chunk 4: isolated chunk, short is fine. Stubborn features should be repeated AND weighted.",
-        placeholder: "e.g. small button nose, slightly upturned",
+        hint: "Chunk 4: Nose area",
+        placeholder: "small button nose, slightly upturned",
         suggestions: [
             "small nose", "large nose", "medium nose",
             "button nose", "straight nose", "hawk nose", "snub nose", "wide nose",
@@ -53,8 +54,8 @@ export const CHUNKS = [
     {
         id: "mouth",
         label: "Mouth + Expression",
-        hint: "Chunk 5: include expression here. Neutral expression gives the cleanest composite base.",
-        placeholder: "e.g. full lips, neutral expression, closed mouth",
+        hint: "Chunk 5: Include expression here.",
+        placeholder: "full lips, neutral expression, closed mouth",
         suggestions: [
             "thin lips", "full lips", "medium lips",
             "neutral expression", "slight smile", "stern expression", "relaxed expression",
@@ -65,8 +66,8 @@ export const CHUNKS = [
     {
         id: "context",
         label: "Clothing + Background",
-        hint: "Chunk 6: context and lighting. Keep lighting neutral for forensic/ID composites.",
-        placeholder: "e.g. plain white background, soft studio lighting, plain clothing",
+        hint: "Chunk 6: Context and lighting.",
+        placeholder: "plain white background, soft studio lighting",
         suggestions: [
             "white background", "gray background", "plain background",
             "soft lighting", "studio lighting", "even lighting", "frontal lighting",

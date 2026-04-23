@@ -45,7 +45,7 @@ export default function PromptBuilder({ isOpen, onClose, onApply }) {
                             className="text-sm font-semibold uppercase tracking-widest"
                             style={{ color: "var(--accent-text)" }}
                         >
-                            Prompt (something not called builder)
+                            Promptinator
                         </span>
 
                         {/* idk where to put this  */}

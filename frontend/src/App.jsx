@@ -89,7 +89,7 @@ export default function App() {
                                     e.currentTarget.style.color = "var(--accent-text)";
                                 }}
                             >
-                                ✦ prompt builder
+                                promptinator
                             </button>
 
                             <button

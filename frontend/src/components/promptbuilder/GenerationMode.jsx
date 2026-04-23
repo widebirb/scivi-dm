@@ -121,13 +121,14 @@ export default function GenerationMode({ onCopy, onApply }) {
                                         >
                                             {/* Tag label */}
                                             <span className="flex-1 text-xs min-w-0 truncate" style={{ color: "var(--text-dim)" }}>
-                                                {tag.weight !== null
+                                                {/* {tag.weight !== null
                                                     ? <span style={{ color: "var(--accent-text)" }}>({tag.label}:{tag.weight.toFixed(1)})</span>
                                                     : tag.label
-                                                }
+                                                } */}
+                                                {tag.label}
                                             </span>
 
-                                            {/* Weight selector */}
+                                            {/* Weight selector 
                                             <select
                                                 value={tag.weight === null ? "null" : tag.weight}
                                                 onChange={(e) => setTagWeight(
@@ -150,7 +151,6 @@ export default function GenerationMode({ onCopy, onApply }) {
                                                 ))}
                                             </select>
 
-                                            {/* Remove */}
                                             <button
                                                 onClick={() => removeTag(chunk.id, tag.id)}
                                                 className="text-xs shrink-0 transition-colors"
@@ -160,6 +160,7 @@ export default function GenerationMode({ onCopy, onApply }) {
                                             >
                                                 ✕
                                             </button>
+                                            */}
                                         </div>
                                     ))}
                                 </div>
@@ -226,13 +227,13 @@ export default function GenerationMode({ onCopy, onApply }) {
                         Negative Prompt
                     </span>
                     <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-                        Things to exclude. You control weighting syntax here manually.
+                        Things to exclude.
                     </p>
                     <textarea
                         rows={2}
                         value={negativePrompt}
                         onChange={(e) => setNegativePrompt(e.target.value)}
-                        placeholder="e.g. blurry, deformed, (extra fingers:1.4), bad anatomy"
+                        placeholder="e.g. blurry, deformed, bad anatomy"
                         className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none"
                         style={{
                             backgroundColor: "var(--bg-surface)",
@@ -246,11 +247,11 @@ export default function GenerationMode({ onCopy, onApply }) {
 
             </div>
 
-            {/* Right - live preview */}
+            {/* Right - preview */}
             <div className="flex-1 flex flex-col gap-3 min-h-0">
                 <div className="flex items-center justify-between">
                     <span className="text-xs uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
-                        Live Preview
+                        Preview
                     </span>
                     <span className="text-xs" style={{ color: "var(--text-muted)" }}>
                         {assembledChunks.length} chunk{assembledChunks.length !== 1 ? "s" : ""}
@@ -269,8 +270,7 @@ export default function GenerationMode({ onCopy, onApply }) {
                 >
                     {fullPrompt || (
                         <span style={{ color: "var(--text-muted)" }}>
-                            Add chips or type in sections on the left to see the assembled prompt.
-                            {"\n\n"}//BREAK// separators are inserted automatically between chunks.
+                            Add chips or type in sections on the left to see the assembled prompt. //BREAK// separators are inserted automatically between chunks.
                         </span>
                     )}
                 </div>
@@ -294,8 +294,7 @@ export default function GenerationMode({ onCopy, onApply }) {
                     <p className="font-semibold" style={{ color: "var(--accent-text)" }}>Prompting Guide</p>
                     <p style={{ color: "var(--text-dim)" }}>· First keywords carry most weight - subject + style first</p>
                     <p style={{ color: "var(--text-dim)" }}>· //BREAK// separates 75-token chunks to avoid attention competition</p>
-                    <p style={{ color: "var(--text-dim)" }}>· Stubborn features: repeat across chunks AND increase weight</p>
-                    <p style={{ color: "var(--text-dim)" }}>· Each chip gets its own weight: <code>(keyword:1.4)</code> - correct syntax</p>
+                    <p style={{ color: "var(--text-dim)" }}>· Stubborn features: repeat across chunks</p>
                 </div>
 
                 <div className="flex gap-2 w-full">

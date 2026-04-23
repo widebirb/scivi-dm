@@ -74,7 +74,7 @@ export default function InpaintingMode({ onCopy, onApply }) {
                     </div>
 
                     <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-                        Repeat the same feature in 2–3 different phrasings. The model has little context in a small masked area, repetition is important.
+                        Repeat the same feature in 2 - 3 different phrasings. Repetition is important since the model has little context.
                     </p>
 
                     {variations.map((v, i) => (
@@ -140,7 +140,7 @@ export default function InpaintingMode({ onCopy, onApply }) {
                         Negative Tags
                     </span>
                     <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-                        Inpainting negatives should be heavily weighted.
+                        Things to exclude.
                     </p>
 
                     {negTags.map((tag, i) => (
@@ -149,7 +149,7 @@ export default function InpaintingMode({ onCopy, onApply }) {
                                 type="text"
                                 value={tag.text}
                                 onChange={(e) => updateNegTag(i, "text", e.target.value)}
-                                placeholder="e.g. teeth, blurry, deformed"
+                                placeholder="teeth, blurry, deformed"
                                 className="flex-1 min-w-0 rounded px-2 py-1.5 text-xs focus:outline-none"
                                 style={{
                                     backgroundColor: "var(--bg-surface)",
@@ -159,7 +159,7 @@ export default function InpaintingMode({ onCopy, onApply }) {
                                 onFocus={(e) => e.target.style.borderColor = "#ef4444"}
                                 onBlur={(e) => e.target.style.borderColor = "var(--border)"}
                             />
-                            <select
+                            {/* <select
                                 value={tag.weight}
                                 onChange={(e) => updateNegTag(i, "weight", Number(e.target.value))}
                                 className="rounded px-1 py-1.5 text-xs focus:outline-none"
@@ -173,7 +173,7 @@ export default function InpaintingMode({ onCopy, onApply }) {
                                 {WEIGHT_PRESETS.map((w) => (
                                     <option key={w} value={w}>{w === 1.0 ? ":1" : `:${w.toFixed(1)}`}</option>
                                 ))}
-                            </select>
+                            </select> */}
 
                             {negTags.length > 1 && (
                                 <button
@@ -249,10 +249,9 @@ export default function InpaintingMode({ onCopy, onApply }) {
                     style={{ backgroundColor: "var(--accent-dim)", border: "1px solid var(--accent)" }}
                 >
                     <p className="font-semibold" style={{ color: "var(--accent-text)" }}>Inpainting rules</p>
-                    <p style={{ color: "var(--text-dim)" }}>· Only describe the masked region - no age, style, background</p>
-                    <p style={{ color: "var(--text-dim)" }}>· Repeat the feature 2–3× in different phrasings</p>
-                    <p style={{ color: "var(--text-dim)" }}>· BREAK is optional - inpaint prompts are short</p>
-                    <p style={{ color: "var(--text-dim)" }}>· Weight negatives aggressively: <code>teeth:1.7</code> not just <code>teeth</code></p>
+                    <p style={{ color: "var(--text-dim)" }}>· Only describe the masked region, no age, style, background</p>
+                    <p style={{ color: "var(--text-dim)" }}>· Repeat the feature 2 - 3x in different phrasings</p>
+                    <p style={{ color: "var(--text-dim)" }}>· BREAK is optional</p>
                 </div>
 
                 <div className="flex gap-2 w-full">
