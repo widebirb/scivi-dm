@@ -11,8 +11,6 @@ const SAMPLERS = [
 const RESOLUTIONS = [
     { label: "512 × 512", width: 512, height: 512 },
     { label: "768 × 768", width: 768, height: 768 },
-    { label: "512 × 768", width: 512, height: 768 },
-    { label: "768 × 512", width: 768, height: 512 },
     { label: "1024 × 1024", width: 1024, height: 1024 },
 ];
 
