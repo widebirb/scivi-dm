@@ -1,130 +1,28 @@
 # scivi-dm
 
-A facial composite generation system. Supports text-to-image generation, inpainting with mask drawing, and full generation history.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
----
+## Short Description
+Final University project in fulfillment of Capstone 2. A facial composite generation system. Supports text-to-image generation, inpainting with mask drawing, allows accessibility with prompt maker and full generation history.
 
-## Project Structure
+## Table of Contents
+- [Features](#features)
+- [Installation / Getting Started](#installation--getting-started)
+- [Configuration](#configuration)
+- [API Reference](#api-reference)
+- [License](#license)
 
-```
-scivi-dm/
-  docker-compose.yml
- 
-  backend/
-    app/
-      models/
-        schemas.py            # Pydantic request/response models
-      services/
-        fake_inference.py     # Simulated inference (USE_FAKE_INFERENCE=true)
-        real_inference.py     # Real diffusers pipeline calls
-        model_manager.py      # Loads and holds both pipelines (singleton)
-        image_processor.py    # Base64 utils, mask blur
-      routers/
-        generate.py           # POST /generate
-        inpaint.py            # POST /inpaint
-        health.py             # GET /health
-      main.py                 # FastAPI app entry, lifespan model loading
-    Dockerfile
-    requirements.txt
-    download_models.py        # Run once on Vast.ai to download models
-    .env.example
- 
-  frontend/
-    src/
-      api/
-        client.js              # Axios instance + endpoint functions
-      components/
-        controls/
-          ParameterControl.jsx    # Generation parameters UI
-          InpaintParameters.jsx   # Denoising strength + mask blur
-        canvas/
-          CompositeCanvas.jsx     # Image display and mask drawing
-        history/
-          VersionControl.jsx      # Generation history panel
-        promptbuilder/
-          PromptBuilder.jsx       # Modal wrapper and mode toggle
-          GenerationMode.jsx      # Chunked generation prompt maker 
-          InpaintingMode.jsx      # Inpainting-specific prompt maker 
-        Header.jsx                # App header + navigation + theme toggle
-        Footer.jsx                # Keyboard shortcuts + version label
-        StatusBar.jsx             # Backend health indicator
-        GeneratingOverlay.jsx     # Loading state over canvas
-      context/
-        ThemeContext.jsx          # Theme provider
-      hooks/
-        useGeneration.js      # Core hook: params, API calls, saving
-        useVersions.js        # React interface over version store
-        useHealth.js          # Backend status polling
-      pages/
-        GuidePage.jsx         
-        AboutPage.jsx          
-      store/
-        versionStore.js       # In-memory version history (singleton)
-      App.jsx
-    Dockerfile
-    nginx.conf
-```
----
+## Features 
+- **Generation:** Text-to-image generation utilizing SDXL checkpoint model JuggernautXL.
+- **Inpainting:** Deep integration of a painting canvas for masking exact regions to be re-drawn by the inference model.
+- **History:** Generation history capturing snapshots of base64 images, parameters, branching chains, and immediate rollback.
+- **Prompt Maker:** Modal interface for focused prompt building schemas for both generation and inpainting.
+- **Fake and Real Inference Swapping:** Toggle between a simulated backend for rapid UI prototyping and real local/cloud diffusion inference.
 
-## Stack
+## Installation / Getting Started
 
-| Layer     | Technology                        |
-|-----------|-----------------------------------|
-| Frontend  | React 18, Vite 5, Tailwind CSS 3  |
-| Canvas    | react-konva, use-image            |
-| Backend   | FastAPI, Uvicorn, Pillow          |
-| Models    | JuggernautXL (diffusers)          |
-| Deploy    | Vast.ai + Docker                  |
-
----
-
-## Current State
-### Phase 2 - Complete
-- FastAPI backend with fake inference endpoints
-  - `POST /generate` — text-to-image
-  - `POST /inpaint` — inpainting with mask
-  - `GET /health` — server + model status
-- Fake inference simulates real response shape, timing, and seed determinism
-- Mask dimension validation on inpaint endpoint
-- Full React frontend
-  - Generation parameters 
-  - Inpainting parameters
-  - Canvas with paint/erase brush,
-  - Version history with thumbnails, expandable parameters, rollback
-  - Loading overlay with elapsed timer
- 
-### ✅ Phase 3 - Complete
-- Real inference code written locally
-  - `model_manager.py` — loads JuggernautXL base (HuggingFace) + inpainting (CivitAI) pipelines
-  - `real_inference.py` — diffusers pipeline calls for txt2img and inpainting
-  - Routers switch between fake/real via `USE_FAKE_INFERENCE` env var
-  - Model loading happens at startup via FastAPI lifespan
-- `download_models.py` — downloads both models to `/workspace/models` on Vast.ai
-- Dockerfile + docker-compose written and build-tested locally (16 min first build)
-- Two-stage frontend build (Node builder → nginx:alpine)
- 
-### ✅ UI Enhancement - Complete
-- Three-column layout: generation params (left) · canvas + history (center) · inpaint options (right)
-- Header with app name, Guide + About navigation, theme toggle
-- Footer with something
-- Tooltips on all parameter controls
-- Guide and About pages
- 
-### ✅ UX(?) Enhancement (Prompt Maker) - Complete
-- Modal popup accessible via **✦ prompt builder** button in the left sidebar
-- **Generation mode** — 6 chunked sections mapping to SD's 75-token attention windows
-- **Inpainting mode** — focused prompt builder for masked region edits
-
-### ⬜ Vast.ai Testing phase
-- Rent Vast.ai instance
-- Run `download_models.py` to download models
-- `docker-compose up` and confirm real inference works end to end
-
-## Setup
-
-### Backend ( fake inference, no GPU needed )
-
-> Requires Python 3.11
+### Backend (For Fake Inference Testing)
+A setup strictly for testing frontend features without GPU overhead. Requires Python 3.11.
 
 ```bash
 cd backend
@@ -132,22 +30,32 @@ python -m venv .venv
 
 # Windows
 .venv\Scripts\activate
- 
+
 # Mac/Linux
 source .venv/bin/activate
  
 pip install fastapi uvicorn pillow pydantic python-dotenv
 python -m uvicorn app.main:app --reload
 ```
- 
-> Do NOT run `pip install -r requirements.txt` locally, it includes torch and diffusers
-> which are only needed in the container.
- 
-API runs at `http://localhost:8000`
-Interactive docs at `http://localhost:8000/docs`
+> API runs at `http://localhost:8000`
+> Interactive docs at `http://localhost:8000/docs`
+
+### Backend (For Real Inference Testing)
+Setup for full generation requiring GPU computing power.
+
+```bash
+cd backend
+# Linux/Mac
+chmod +x backend-setup.sh
+./backend-setup.sh <FRONTEND_URL> <CIVITAI_API_KEY>
+
+# Windows (Bash/WSL/Git Bash)
+bash backend-setup.sh <FRONTEND_URL> <CIVITAI_API_KEY>
+
+python -m uvicorn app.main:app --reload
+```
 
 ### Frontend
-
 > Requires Node.js 24+
 
 ```bash
@@ -155,20 +63,27 @@ cd frontend
 npm install
 npm run dev
 ```
+> UI runs at `http://localhost:5173`
 
-UI runs at `http://localhost:5173`
+## Configuration
 
-Create `frontend/.env`:
+**Backend** — copy `.env.example` to `.env` in `backend/`:
+```env
+USE_FAKE_INFERENCE=true
+MODEL_PATH=/workspace/models
+INPAINT_MODEL_PATH=/workspace/models/juggernaut-xl-inpainting.safetensors
+FRONTEND_URL=http://localhost:5173
+CIVITAI_API_KEY=your_key_here
 ```
+
+**Frontend** — create `.env` in `frontend/`:
+```env
 VITE_API_URL=http://localhost:8000
 ```
-
----
 
 ## API Reference
 
 ### POST `/generate`
-
 ```json
 {
   "parameters": {
@@ -185,7 +100,6 @@ VITE_API_URL=http://localhost:8000
 ```
 
 ### POST `/inpaint`
-
 ```json
 {
   "image": "data:image/png;base64,...",
@@ -197,11 +111,9 @@ VITE_API_URL=http://localhost:8000
   }
 }
 ```
-
 > Mask format: grayscale PNG, **white = repaint**, **black = keep**. Must match image dimensions exactly.
 
 ### GET `/health`
-
 ```json
 {
   "status": "ok",
@@ -210,51 +122,24 @@ VITE_API_URL=http://localhost:8000
 }
 ```
 
----
+## License 
 
-## Version Control
+### Project Code License
+This project's original source code is released under the **MIT License**. You are free to use, modify, and distribute the code for both commercial and non-commercial purposes, provided that you include the original copyright notice.
 
-No database. Each generation saves a JSON snapshot of:
-- Output image (base64), full parameters used, timestamp, parent version ID (tracks branching chain)
----
+### Open Source AI Models
+This application integrates third-party, open-source AI models subject to varying licenses:
+- **JuggernautXL v9** (Base Text-to-Image Generation)
+  - Hosted at: [RunDiffusion/Juggernaut-XL-v9](https://huggingface.co/RunDiffusion/Juggernaut-XL-v9)
+  - Governed by an Open RAIL++-M style license, which permits commercial use but prohibits the production of illegal or unethical content (e.g., non-consensual deepfakes, copyright-infringing content, etc.).
+- **JuggernautXL Inpainting** (Inpainting Variant)
+  - Sourced from [CivitAI](https://civitai.com/) (Model ID `456538`).
+  - Usage must abide by both CivitAI's terms of service and the specific permissive open-source license provided by the model creator, disallowing generation of explicitly prohibited material.
 
-## Environment Variables
- 
-**Backend** — copy `.env.example` to `.env` in `backend/`:
- 
-```
-USE_FAKE_INFERENCE=true
-MODEL_PATH=/models
-INPAINT_MODEL_PATH=/models/juggernaut-xl-inpainting.safetensors
-```
+### Core Open Source Dependencies
+Key external libraries used under permissive licenses:
+- **[diffusers](https://github.com/huggingface/diffusers)**, **[transformers](https://github.com/huggingface/transformers)**: Apache License 2.0
+- **FastAPI**, **React**, **Vite**: MIT License
 
-**Frontend** — create `.env` in `frontend/`:
-
-```
-VITE_API_URL=http://localhost:8000
-```
-
----
- 
-## Models
- 
-| Model | Source | Purpose |
-|-------|--------|---------|
-| JuggernautXL v9 | HuggingFace — `RunDiffusion/Juggernaut-XL-v9` | Text-to-image generation |
-| JuggernautXL Inpainting | CivitAI — model ID 456538 | Inpainting (fine-tuned) |
- 
-The inpainting model is a separate fine-tuned variant for better seam quality. Using the base model for inpainting produces visible style mismatches between painted and original regions.
- 
----
-
-## Roadmap
-
-```
-Phase 1 — Colab inference testing         [ skipped ]
-Phase 2 — Fake backend + Full frontend    [ done ]
-Phase 3 — Real inference code + Docker    [ code done ]
-Phase 4 — Deploy + validate on Vast.ai    [ pending ]
-UI Revamp                                 [ done ]
-Prompt Builder                            [ done ]
-Serverless                                [ low priority ]
-```
+### Credits
+Thank you to Egorpolyakov (https://www.flaticon.com/authors/egorpolyakov) for the favicon
