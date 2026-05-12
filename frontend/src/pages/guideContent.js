@@ -14,7 +14,6 @@ export const sections = [
         items: [
             "Open the Prompt Builder and select Generation mode.",
             "Fill in each chunk section: Subject, Hair, Eyes, Nose, Mouth, and Background. Use suggestion chips or type freely.",
-            "Assign weights to individual keywords that need emphasis. Stubborn features (e.g. thin lips, small eyes) should be weighted at 1.4 or higher.",
             "Fill in the Negative Prompt with anything the model should not generate.",
             "Set your parameters: Resolution, Sampler, Steps, CFG Scale, and optionally a Seed.",
             "Click Generate. Review the output against your intended description.",
@@ -28,8 +27,7 @@ export const sections = [
             "Prompts are processed in chunks of 75 tokens. Features in the same chunk compete for attention. Use //BREAK// to separate feature groups so each is processed with focused attention.",
             "Keywords at the start of a chunk carry more weight than those at the end. Always lead with subject, age, and style.",
             "Recommended chunk order: (1) Subject + age + ethnicity + face shape + style, (2) Hair, (3) Eyes + eyebrows, (4) Nose, (5) Mouth + lips + expression, (6) Clothing + lighting + background.",
-            "To amplify a keyword: keyword:1.4 or (((keyword))). To suppress: keyword:0.7 or [[[keyword]]]. Weights above 2.0 generally cause image artifacts.",
-            "If the model ignores a feature at normal weight, repeat it across multiple chunks and increase the weight. Example: thin lips, repeated as (thin lips:1.7) in the mouth chunk and once more in the subject chunk.",
+            "If the model ignores a feature at normal weight, repeat it across multiple chunks.",
             "Add solo and headshot to the subject chunk to prevent the model from generating multiple faces or incorrect framing.",
             "Negative prompts suppress unwanted defaults. Always include: multiple faces, duplicate, full body, malformed, bad quality. Add feature-specific suppression as needed (e.g. thick lips, open mouth, beard).",
         ],
@@ -54,8 +52,8 @@ export const sections = [
             "Only describe the masked region. Drop all global context, no age, ethnicity, style, or background. That information is already locked in the base image.",
             "Repeat the target feature 2-3 times in slightly different phrasings. The model has little surrounding context inside a small masked region, so repetition reinforces the instruction.",
             "//BREAK// is optional in inpainting prompts. Since prompts are short, hitting the 75-token limit is unlikely. Only use it if the mask covers two clearly distinct sub-regions (e.g. hair and earrings both masked together).",
-            "Example - Mouth region: 'thin lips, very thin lips:1.6, closed mouth // Negative: teeth:1.7, open mouth, thick lips'",
-            "Example - Eyes region: 'almond eyes, narrow dark eyes:1.4, dark brown eyes // Negative: large eyes:1.5, round eyes, eyelashes:1.4'",
+            "Example - Mouth region: 'thin lips, very thin lips, closed mouth // Negative: teeth, open mouth, thick lips'",
+            "Example - Eyes region: 'almond eyes, narrow dark eyes, dark brown eyes // Negative: large eyes, round eyes, eyelashes'",
         ],
     },
     {
@@ -84,7 +82,7 @@ export const sections = [
             {
                 name: "Prompt",
                 type: "text",
-                description: "The main description of what to generate. Uses //BREAK// to separate 75-token chunks. Keywords at the start of each chunk carry the most weight. Supports weighting syntax: keyword:1.4 to amplify, keyword:0.7 to suppress.",
+                description: "The main description of what to generate. Uses //BREAK// to separate 75-token chunks. Keywords at the start of each chunk carry the most weight.",
             },
             {
                 name: "Negative Prompt",
