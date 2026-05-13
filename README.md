@@ -2,7 +2,6 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Short Description
 Final University project in fulfillment of Capstone 2. A facial composite generation system. Supports text-to-image generation, inpainting with mask drawing, allows accessibility with prompt maker and full generation history.
 
 ## Table of Contents
