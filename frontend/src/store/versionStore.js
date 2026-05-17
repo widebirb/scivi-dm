@@ -22,7 +22,7 @@ export function saveVersion({ versionId, imageData, parameters, parentId = null,
         generationTime,
         maskData,
         inpaintParams,
-        label: `v${versions.length + 1} — ${parameters.prompt.slice(0, 30) || "no prompt"}`,
+        label: `v${versions.length + 1} - ${parameters.prompt.slice(0, 30) || "no prompt"}`,
     };
     versions = [...versions, version];
     notify();

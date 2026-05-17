@@ -32,15 +32,25 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
     }, [isGrayscale, konvaImage]);
 
     const handleExport = useCallback(() => {
-        if (!stageRef.current) return;
-        const uri = stageRef.current.toDataURL({ pixelRatio: 1 });
+        if (!konvaImage) return;
+
+        const nativeW = konvaImage.naturalWidth || konvaImage.width || CANVAS_SIZE;
+        const nativeH = konvaImage.naturalHeight || konvaImage.height || CANVAS_SIZE;
+
+        const offscreen = document.createElement("canvas");
+        offscreen.width = nativeW;
+        offscreen.height = nativeH;
+        const ctx = offscreen.getContext("2d");
+        ctx.drawImage(konvaImage, 0, 0, nativeW, nativeH);
+
+        const uri = offscreen.toDataURL("image/png");
         const link = document.createElement("a");
         link.download = "scivi-export.png";
         link.href = uri;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    }, []);
+    }, [konvaImage]);
 
     function getPointerPos() {
         return stageRef.current.getPointerPosition();
