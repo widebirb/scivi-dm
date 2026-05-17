@@ -12,7 +12,7 @@ export function subscribe(fn) {
     };
 }
 
-export function saveVersion({ versionId, imageData, parameters, parentId = null, generationTime = null }) {
+export function saveVersion({ versionId, imageData, parameters, parentId = null, generationTime = null, maskData = null, inpaintParams = null }) {
     const version = {
         versionId,
         timestamp: new Date().toISOString(),
@@ -20,6 +20,8 @@ export function saveVersion({ versionId, imageData, parameters, parentId = null,
         parameters,
         parentId,
         generationTime,
+        maskData,
+        inpaintParams,
         label: `v${versions.length + 1} — ${parameters.prompt.slice(0, 30) || "no prompt"}`,
     };
     versions = [...versions, version];

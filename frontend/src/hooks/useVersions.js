@@ -17,7 +17,7 @@ export function useVersions() {
         return unsub;
     }, []);
 
-    const save = useCallback((generationResponse) => {
+    const save = useCallback((generationResponse, { maskData = null, inpaintParams = null } = {}) => {
         const { version_id, image_data, used_parameters, generation_time } = generationResponse;
 
         // parentId is the current active version 
@@ -27,6 +27,8 @@ export function useVersions() {
             parameters: used_parameters,
             parentId: activeVersionId,
             generationTime: generation_time,
+            maskData,
+            inpaintParams,
         });
 
         setActiveVersionId(saved.versionId);

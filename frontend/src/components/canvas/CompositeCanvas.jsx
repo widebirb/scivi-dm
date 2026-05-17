@@ -33,17 +33,14 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
 
     const handleExport = useCallback(() => {
         if (!stageRef.current) return;
-        // Match the exported resolution to the mounted image's natural size.
-        const imgW = konvaImage ? (konvaImage.naturalWidth || konvaImage.width) : CANVAS_SIZE;
-        const pixelRatio = imgW / CANVAS_SIZE;
-        const uri = stageRef.current.toDataURL({ pixelRatio });
+        const uri = stageRef.current.toDataURL({ pixelRatio: 1 });
         const link = document.createElement("a");
         link.download = "scivi-export.png";
         link.href = uri;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    }, [konvaImage]);
+    }, []);
 
     function getPointerPos() {
         return stageRef.current.getPointerPosition();

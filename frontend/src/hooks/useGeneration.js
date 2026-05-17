@@ -43,7 +43,7 @@ export function useGeneration() {
 
         try {
             const result = await inpaint(imageData, maskData, parameters, inpaintParams);
-            save(result);
+            save(result, { maskData, inpaintParams });
         } catch (err) {
             setError(err.message);
         } finally {

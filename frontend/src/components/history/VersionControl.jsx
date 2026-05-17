@@ -93,7 +93,30 @@ export default function VersionControl({ versions, activeVersion, onRollback, on
                                             <span className="text-[10px] font-bold tracking-wider" style={{ color: "green" }}>{v.generationTime.toFixed(2)}s</span>
                                         </div>
                                     )}
+                                    {v.inpaintParams && (
+                                        <>
+                                            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded border" style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--border-dim)" }}>
+                                                <span className="text-[9px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>Denoise</span>
+                                                <span className="text-[10px] font-mono" style={{ color: "var(--accent-text)" }}>{v.inpaintParams.denoising_strength.toFixed(2)}</span>
+                                            </div>
+                                            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded border" style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--border-dim)" }}>
+                                                <span className="text-[9px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>Blur</span>
+                                                <span className="text-[10px] font-mono" style={{ color: "var(--accent-text)" }}>{v.inpaintParams.mask_blur}px</span>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
+                                {v.maskData && (
+                                    <div className="pt-1">
+                                        <p className="text-[9px] uppercase tracking-wider mb-1" style={{ color: "var(--text-muted)" }}>Mask</p>
+                                        <img
+                                            src={v.maskData}
+                                            alt="inpaint mask"
+                                            className="w-full rounded composite-image"
+                                            style={{ border: "1px solid var(--border-dim)", opacity: 0.85 }}
+                                        />
+                                    </div>
+                                )}
                                 {v.parentId && <p className="text-[10px] pt-1" style={{ color: "var(--text-muted)" }}>↳ branched</p>}
                             </div>
                         )}
