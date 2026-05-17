@@ -70,6 +70,11 @@ export default function VersionControl({ versions, activeVersion, onRollback, on
                                 style={{ borderColor: "var(--border-dim)" }}
                             >
                                 <p style={{ color: "var(--text-dim)" }} className="text-xs leading-relaxed">{v.parameters.prompt || "—"}</p>
+                                {v.parameters.negative_prompt && (
+                                    <p style={{ color: "var(--text-muted)" }} className="text-xs leading-relaxed italic">
+                                        negative_prompt = {v.parameters.negative_prompt}
+                                    </p>
+                                )}
                                 <div className="flex flex-wrap gap-1.5 pt-0.5">
                                     <div className="flex items-center gap-1 px-1.5 py-0.5 rounded border" style={{ backgroundColor: "var(--bg-raised)", borderColor: "var(--border-dim)" }}>
                                         <span className="text-[9px] uppercase font-bold tracking-wider" style={{ color: "var(--text-muted)" }}>Seed</span>
