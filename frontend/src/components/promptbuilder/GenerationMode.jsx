@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CHUNKS, WEIGHT_OPTIONS } from "./config";
+import { CHUNKS } from "./config";
 
 function applyWeight(keyword, weight) {
     if (weight === null) return keyword;
@@ -49,18 +49,6 @@ export default function GenerationMode({ onCopy, onApply }) {
         }));
     }
 
-    function setTagWeight(chunkId, tagId, weight) {
-        setChunks((prev) => ({
-            ...prev,
-            [chunkId]: {
-                ...prev[chunkId],
-                tags: prev[chunkId].tags.map((t) =>
-                    t.id === tagId ? { ...t, weight } : t
-                ),
-            },
-        }));
-    }
-
     function updateText(chunkId, text) {
         setChunks((prev) => ({
             ...prev,
@@ -96,19 +84,17 @@ export default function GenerationMode({ onCopy, onApply }) {
                     return (
                         <div
                             key={chunk.id}
-                            className="rounded p-3 flex flex-col gap-2"
-                            style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border-dim)" }}
+                            className="rounded p-3 flex flex-col gap-2 bg-bg border border-dim"
                         >
                             {/* Header */}
                             <div className="flex items-center justify-between">
-                                <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--accent-text)" }}>
+                                <span className="text-xs font-semibold uppercase tracking-wider text-accent-fg">
                                     {chunk.label}
                                 </span>
-
                             </div>
 
                             {/* Hint */}
-                            <p className="text-xs" style={{ color: "var(--text-muted)" }}>{chunk.hint}</p>
+                            <p className="text-xs text-tx-muted">{chunk.hint}</p>
 
                             {/* Active tags with individual weight controls */}
                             {activeTags.length > 0 && (
@@ -116,51 +102,12 @@ export default function GenerationMode({ onCopy, onApply }) {
                                     {activeTags.map((tag) => (
                                         <div
                                             key={tag.id}
-                                            className="flex items-center gap-1.5 px-2 py-1 rounded"
-                                            style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-dim)" }}
+                                            className="flex items-center gap-1.5 px-2 py-1 rounded bg-surface border border-dim"
                                         >
                                             {/* Tag label */}
-                                            <span className="flex-1 text-xs min-w-0 truncate" style={{ color: "var(--text-dim)" }}>
-                                                {/* {tag.weight !== null
-                                                    ? <span style={{ color: "var(--accent-text)" }}>({tag.label}:{tag.weight.toFixed(1)})</span>
-                                                    : tag.label
-                                                } */}
+                                            <span className="flex-1 text-xs min-w-0 truncate text-tx-dim">
                                                 {tag.label}
                                             </span>
-
-                                            {/* Weight selector 
-                                            <select
-                                                value={tag.weight === null ? "null" : tag.weight}
-                                                onChange={(e) => setTagWeight(
-                                                    chunk.id,
-                                                    tag.id,
-                                                    e.target.value === "null" ? null : Number(e.target.value)
-                                                )}
-                                                className="text-xs rounded px-1 py-0.5 focus:outline-none shrink-0"
-                                                style={{
-                                                    backgroundColor: "var(--bg-raised)",
-                                                    border: `1px solid ${tag.weight !== null ? "var(--accent)" : "var(--border)"}`,
-                                                    color: tag.weight !== null ? "var(--accent-text)" : "var(--text-muted)",
-                                                    width: "90px",
-                                                }}
-                                            >
-                                                {WEIGHT_OPTIONS.map((w) => (
-                                                    <option key={w.label} value={w.value === null ? "null" : w.value}>
-                                                        {w.label}
-                                                    </option>
-                                                ))}
-                                            </select>
-
-                                            <button
-                                                onClick={() => removeTag(chunk.id, tag.id)}
-                                                className="text-xs shrink-0 transition-colors"
-                                                style={{ color: "var(--text-muted)" }}
-                                                onMouseEnter={(e) => e.target.style.color = "#ef4444"}
-                                                onMouseLeave={(e) => e.target.style.color = "var(--text-muted)"}
-                                            >
-                                                ✕
-                                            </button>
-                                            */}
                                         </div>
                                     ))}
                                 </div>
@@ -172,14 +119,7 @@ export default function GenerationMode({ onCopy, onApply }) {
                                 value={chunkData.text}
                                 onChange={(e) => updateText(chunk.id, e.target.value)}
                                 placeholder={chunk.placeholder}
-                                className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none"
-                                style={{
-                                    backgroundColor: "var(--bg-surface)",
-                                    border: "1px solid var(--border)",
-                                    color: "var(--text)",
-                                }}
-                                onFocus={(e) => e.target.style.borderColor = "var(--accent)"}
-                                onBlur={(e) => e.target.style.borderColor = "var(--border)"}
+                                className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none bg-surface border border-bd text-tx focus:border-accent transition-colors"
                             />
 
                             {/* Suggestion chips (click to add as a weighted tag) */}
@@ -190,24 +130,7 @@ export default function GenerationMode({ onCopy, onApply }) {
                                         <button
                                             key={tag}
                                             onClick={() => isActive ? removeTag(chunk.id, activeTags.find(t => t.label === tag).id) : addTag(chunk.id, tag)}
-                                            className="px-2 py-0.5 rounded-full text-xs transition-colors"
-                                            style={{
-                                                backgroundColor: isActive ? "var(--accent-dim)" : "var(--bg-raised)",
-                                                border: `1px solid ${isActive ? "var(--accent)" : "var(--border-dim)"}`,
-                                                color: isActive ? "var(--accent-text)" : "var(--text-muted)",
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                if (!isActive) {
-                                                    e.currentTarget.style.borderColor = "var(--accent)";
-                                                    e.currentTarget.style.color = "var(--accent-text)";
-                                                }
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                if (!isActive) {
-                                                    e.currentTarget.style.borderColor = "var(--border-dim)";
-                                                    e.currentTarget.style.color = "var(--text-muted)";
-                                                }
-                                            }}
+                                            className={`px-2 py-0.5 rounded-full text-xs chip-suggestion ${isActive ? "is-active" : ""}`}
                                         >
                                             {isActive ? "✓ " : "+ "}{tag}
                                         </button>
@@ -219,14 +142,11 @@ export default function GenerationMode({ onCopy, onApply }) {
                 })}
 
                 {/* Negative prompt */}
-                <div
-                    className="rounded p-3 flex flex-col gap-2"
-                    style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border-dim)" }}
-                >
-                    <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#ef4444" }}>
+                <div className="rounded p-3 flex flex-col gap-2 bg-bg border border-dim">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-danger">
                         Negative Prompt
                     </span>
-                    <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                    <p className="text-xs text-tx-muted">
                         Things to exclude.
                     </p>
                     <textarea
@@ -234,14 +154,7 @@ export default function GenerationMode({ onCopy, onApply }) {
                         value={negativePrompt}
                         onChange={(e) => setNegativePrompt(e.target.value)}
                         placeholder="e.g. blurry, deformed, bad anatomy"
-                        className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none"
-                        style={{
-                            backgroundColor: "var(--bg-surface)",
-                            border: "1px solid var(--border)",
-                            color: "var(--text)",
-                        }}
-                        onFocus={(e) => e.target.style.borderColor = "#ef4444"}
-                        onBlur={(e) => e.target.style.borderColor = "var(--border)"}
+                        className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none bg-surface border border-bd text-tx focus:border-danger transition-colors"
                     />
                 </div>
 
@@ -250,26 +163,17 @@ export default function GenerationMode({ onCopy, onApply }) {
             {/* Right - preview */}
             <div className="flex-1 flex flex-col gap-3 min-h-0">
                 <div className="flex items-center justify-between">
-                    <span className="text-xs uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+                    <span className="text-xs uppercase tracking-widest text-tx-muted">
                         Preview
                     </span>
-                    <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+                    <span className="text-xs text-tx-muted">
                         {assembledChunks.length} chunk{assembledChunks.length !== 1 ? "s" : ""}
                     </span>
                 </div>
 
-                <div
-                    className="flex-1 rounded p-3 text-xs overflow-y-auto font-mono leading-relaxed"
-                    style={{
-                        backgroundColor: "var(--bg)",
-                        border: "1px solid var(--border-dim)",
-                        color: "var(--text-dim)",
-                        whiteSpace: "pre-wrap",
-                        wordBreak: "break-word",
-                    }}
-                >
+                <div className="flex-1 rounded p-3 text-xs overflow-y-auto font-mono leading-relaxed bg-bg border border-dim text-tx-dim pre-wrap break-words">
                     {fullPrompt || (
-                        <span style={{ color: "var(--text-muted)" }}>
+                        <span className="text-tx-muted">
                             Add chips or type in sections on the left to see the assembled prompt. //BREAK// separators are inserted automatically between chunks.
                         </span>
                     )}
@@ -277,24 +181,18 @@ export default function GenerationMode({ onCopy, onApply }) {
 
                 {negativePrompt && (
                     <div>
-                        <p className="text-xs mb-1" style={{ color: "#ef4444" }}>Negative:</p>
-                        <div
-                            className="rounded p-3 text-xs"
-                            style={{ backgroundColor: "var(--bg)", border: "1px solid #fca5a5", color: "var(--text-dim)" }}
-                        >
+                        <p className="text-xs mb-1 text-danger">Negative:</p>
+                        <div className="rounded p-3 text-xs bg-bg border border-danger/40 text-tx-dim">
                             {negativePrompt}
                         </div>
                     </div>
                 )}
 
-                <div
-                    className="rounded p-3 text-xs flex flex-col gap-1"
-                    style={{ backgroundColor: "var(--accent-dim)", border: "1px solid var(--accent)" }}
-                >
-                    <p className="font-semibold" style={{ color: "var(--accent-text)" }}>Prompting Guide</p>
-                    <p style={{ color: "var(--text-dim)" }}>· First keywords carry most weight - subject + style first</p>
-                    <p style={{ color: "var(--text-dim)" }}>· //BREAK// separates 75-token chunks to avoid attention competition</p>
-                    <p style={{ color: "var(--text-dim)" }}>· Stubborn features: repeat across chunks</p>
+                <div className="rounded p-3 text-xs flex flex-col gap-1 bg-accent-dim border border-accent">
+                    <p className="font-semibold text-accent-fg">Prompting Guide</p>
+                    <p className="text-tx-dim">· First keywords carry most weight - subject + style first</p>
+                    <p className="text-tx-dim">· //BREAK// separates 75-token chunks to avoid attention competition</p>
+                    <p className="text-tx-dim">· Stubborn features: repeat across chunks</p>
                 </div>
 
                 <div className="flex gap-2 w-full">
@@ -308,20 +206,7 @@ export default function GenerationMode({ onCopy, onApply }) {
                     <button
                         onClick={() => onApply?.(fullPrompt, negativePrompt)}
                         disabled={!fullPrompt}
-                        className="flex-1 py-2.5 rounded text-sm font-semibold uppercase tracking-wider transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                        style={{ backgroundColor: "var(--accent-dim)", color: "var(--accent-text)", border: "1px solid var(--accent)" }}
-                        onMouseEnter={(e) => {
-                            if (fullPrompt) {
-                                e.currentTarget.style.backgroundColor = "var(--accent)";
-                                e.currentTarget.style.color = "var(--generate-text)";
-                            }
-                        }}
-                        onMouseLeave={(e) => {
-                            if (fullPrompt) {
-                                e.currentTarget.style.backgroundColor = "var(--accent-dim)";
-                                e.currentTarget.style.color = "var(--accent-text)";
-                            }
-                        }}
+                        className="flex-1 py-2.5 rounded text-sm font-semibold uppercase tracking-wider btn-apply disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                         Apply Prompt
                     </button>

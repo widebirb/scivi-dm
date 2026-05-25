@@ -17,43 +17,22 @@ export default function PromptBuilder({ isOpen, onClose, onApply }) {
         <>
             {/* Backdrop */}
             <div
-                className="fixed inset-0 z-40"
-                style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
+                className="fixed inset-0 z-40 bg-black/40"
                 onClick={onClose}
             />
 
             {/* Modal */}
-            <div
-                className="fixed z-50 flex flex-col rounded-lg shadow-2xl"
-                style={{
-                    top: "5vh",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    width: "min(1100px, 95vw)",
-                    height: "88vh",
-                    backgroundColor: "var(--bg-surface)",
-                    border: "1px solid var(--border)",
-                }}
-            >
+            <div className="fixed z-50 flex flex-col rounded-lg shadow-2xl bg-surface border border-bd top-[5vh] left-1/2 -translate-x-1/2 w-[min(1100px,95vw)] h-[88vh]">
                 {/* Header */}
-                <div
-                    className="flex items-center justify-between px-5 py-3 border-b shrink-0"
-                    style={{ borderColor: "var(--border-dim)" }}
-                >
+                <div className="flex items-center justify-between px-5 py-3 border-b border-dim shrink-0">
                     <div className="flex items-center gap-8">
-                        <span
-                            className="text-sm font-semibold uppercase tracking-widest"
-                            style={{ color: "var(--accent-text)" }}
-                        >
+                        <span className="text-sm font-semibold uppercase tracking-widest text-accent-fg">
                             Promptinator
                         </span>
 
                         {/* idk where to put this  */}
                         {copied && (
-                            <span
-                                className="text-xs px-2 py-1 rounded"
-                                style={{ backgroundColor: "var(--accent2-dim)", color: "var(--accent2-text)" }}
-                            >
+                            <span className="text-xs px-2 py-1 rounded bg-accent2-dim text-accent2-fg">
                                 ✓ copied
                             </span>
                         )}
@@ -69,11 +48,11 @@ export default function PromptBuilder({ isOpen, onClose, onApply }) {
                                 <button
                                     key={m.id}
                                     onClick={() => setMode(m.id)}
-                                    className="px-4 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors mx-1"
-                                    style={{
-                                        backgroundColor: mode === m.id ? "var(--accent)" : "var(--bg-raised)",
-                                        color: mode === m.id ? "var(--generate-text)" : "var(--text-muted)",
-                                    }}
+                                    className={`px-4 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors mx-1 rounded ${
+                                        mode === m.id
+                                            ? "bg-accent text-gen-fg"
+                                            : "bg-raised text-tx-muted hover:text-tx-dim"
+                                    }`}
                                 >
                                     {m.label}
                                 </button>
@@ -82,10 +61,7 @@ export default function PromptBuilder({ isOpen, onClose, onApply }) {
 
                         <button
                             onClick={onClose}
-                            className="text-xl transition-colors px-2"
-                            style={{ color: "var(--text-muted)" }}
-                            onMouseEnter={(e) => e.target.style.color = "var(--text)"}
-                            onMouseLeave={(e) => e.target.style.color = "var(--text-muted)"}
+                            className="text-xl transition-colors px-2 text-tx-muted hover:text-tx"
                         >
                             x
                         </button>

@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { WEIGHT_PRESETS } from "./config";
-
 
 function buildNegativeTag(text, weight) {
     if (!text.trim()) return "";
@@ -60,27 +58,24 @@ export default function InpaintingMode({ onCopy, onApply }) {
             <div className="flex flex-col gap-4 w-96 overflow-y-auto pr-2 shrink-0">
 
                 {/* Prompt variations */}
-                <div
-                    className="rounded p-3 flex flex-col gap-2"
-                    style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border-dim)" }}
-                >
+                <div className="rounded p-3 flex flex-col gap-2 bg-bg border border-dim">
                     <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--accent-text)" }}>
+                        <span className="text-xs font-semibold uppercase tracking-wider text-accent-fg">
                             Prompt Variations
                         </span>
-                        <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+                        <span className="text-xs text-tx-muted">
                             {variations.length}/3
                         </span>
                     </div>
 
-                    <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                    <p className="text-xs text-tx-muted">
                         Repeat the same feature in 2 - 3 different phrasings. Repetition is important since the model has little context.
                     </p>
 
                     {variations.map((v, i) => (
                         <div key={i} className="flex gap-1 items-start">
                             <div className="flex flex-col flex-1 gap-0.5">
-                                <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+                                <span className="text-xs text-tx-muted">
                                     phrasing {i + 1}
                                 </span>
                                 <textarea
@@ -88,23 +83,13 @@ export default function InpaintingMode({ onCopy, onApply }) {
                                     value={v}
                                     onChange={(e) => updateVariation(i, e.target.value)}
                                     placeholder="Describe the feature you're inpainting..."
-                                    className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none"
-                                    style={{
-                                        backgroundColor: "var(--bg-surface)",
-                                        border: "1px solid var(--border)",
-                                        color: "var(--text)",
-                                    }}
-                                    onFocus={(e) => e.target.style.borderColor = "var(--accent)"}
-                                    onBlur={(e) => e.target.style.borderColor = "var(--border)"}
+                                    className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none bg-surface border border-bd text-tx focus:border-accent transition-colors"
                                 />
                             </div>
                             {variations.length > 1 && (
                                 <button
                                     onClick={() => removeVariation(i)}
-                                    className="mt-5 text-xs transition-colors"
-                                    style={{ color: "var(--text-muted)" }}
-                                    onMouseEnter={(e) => e.target.style.color = "#ef4444"}
-                                    onMouseLeave={(e) => e.target.style.color = "var(--text-muted)"}
+                                    className="mt-5 text-xs transition-colors text-tx-muted hover:text-danger"
                                 >
                                     ✕
                                 </button>
@@ -115,16 +100,7 @@ export default function InpaintingMode({ onCopy, onApply }) {
                     {variations.length < 3 && (
                         <button
                             onClick={addVariation}
-                            className="text-xs py-1.5 rounded transition-colors"
-                            style={{ border: "1px dashed var(--border)", color: "var(--text-muted)" }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.borderColor = "var(--accent)";
-                                e.currentTarget.style.color = "var(--accent-text)";
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.borderColor = "var(--border)";
-                                e.currentTarget.style.color = "var(--text-muted)";
-                            }}
+                            className="text-xs py-1.5 rounded transition-colors btn-dashed"
                         >
                             + add variation
                         </button>
@@ -132,14 +108,11 @@ export default function InpaintingMode({ onCopy, onApply }) {
                 </div>
 
                 {/* Negative tags with weight */}
-                <div
-                    className="rounded p-3 flex flex-col gap-2"
-                    style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border-dim)" }}
-                >
-                    <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#ef4444" }}>
+                <div className="rounded p-3 flex flex-col gap-2 bg-bg border border-dim">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-danger">
                         Negative Tags
                     </span>
-                    <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                    <p className="text-xs text-tx-muted">
                         Things to exclude.
                     </p>
 
@@ -150,38 +123,13 @@ export default function InpaintingMode({ onCopy, onApply }) {
                                 value={tag.text}
                                 onChange={(e) => updateNegTag(i, "text", e.target.value)}
                                 placeholder="teeth, blurry, deformed"
-                                className="flex-1 min-w-0 rounded px-2 py-1.5 text-xs focus:outline-none"
-                                style={{
-                                    backgroundColor: "var(--bg-surface)",
-                                    border: "1px solid var(--border)",
-                                    color: "var(--text)",
-                                }}
-                                onFocus={(e) => e.target.style.borderColor = "#ef4444"}
-                                onBlur={(e) => e.target.style.borderColor = "var(--border)"}
+                                className="flex-1 min-w-0 rounded px-2 py-1.5 text-xs focus:outline-none bg-surface border border-bd text-tx focus:border-danger transition-colors"
                             />
-                            {/* <select
-                                value={tag.weight}
-                                onChange={(e) => updateNegTag(i, "weight", Number(e.target.value))}
-                                className="rounded px-1 py-1.5 text-xs focus:outline-none"
-                                style={{
-                                    backgroundColor: "var(--bg-raised)",
-                                    border: "1px solid var(--border)",
-                                    color: "var(--text-dim)",
-                                    width: "80px",
-                                }}
-                            >
-                                {WEIGHT_PRESETS.map((w) => (
-                                    <option key={w} value={w}>{w === 1.0 ? ":1" : `:${w.toFixed(1)}`}</option>
-                                ))}
-                            </select> */}
 
                             {negTags.length > 1 && (
                                 <button
                                     onClick={() => removeNegTag(i)}
-                                    className="text-xs transition-colors shrink-0"
-                                    style={{ color: "var(--text-muted)" }}
-                                    onMouseEnter={(e) => e.target.style.color = "#ef4444"}
-                                    onMouseLeave={(e) => e.target.style.color = "var(--text-muted)"}
+                                    className="text-xs transition-colors shrink-0 text-tx-muted hover:text-danger"
                                 >
                                     ✕
                                 </button>
@@ -191,16 +139,7 @@ export default function InpaintingMode({ onCopy, onApply }) {
 
                     <button
                         onClick={addNegTag}
-                        className="text-xs py-1 rounded transition-colors"
-                        style={{ border: "1px dashed var(--border)", color: "var(--text-muted)" }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.borderColor = "#ef4444";
-                            e.currentTarget.style.color = "#ef4444";
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.borderColor = "var(--border)";
-                            e.currentTarget.style.color = "var(--text-muted)";
-                        }}
+                        className="text-xs py-1 rounded transition-colors btn-dashed btn-dashed-danger"
                     >
                         + add tag
                     </button>
@@ -211,22 +150,13 @@ export default function InpaintingMode({ onCopy, onApply }) {
             {/* Right - preview */}
             <div className="flex-1 flex flex-col gap-3 min-h-0">
 
-                <span className="text-xs uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+                <span className="text-xs uppercase tracking-widest text-tx-muted">
                     Preview
                 </span>
 
-                <div
-                    className="flex-1 rounded p-3 text-xs overflow-y-auto font-mono leading-relaxed"
-                    style={{
-                        backgroundColor: "var(--bg)",
-                        border: "1px solid var(--border-dim)",
-                        color: "var(--text-dim)",
-                        whiteSpace: "pre-wrap",
-                        wordBreak: "break-word",
-                    }}
-                >
+                <div className="flex-1 rounded p-3 text-xs overflow-y-auto font-mono leading-relaxed bg-bg border border-dim text-tx-dim pre-wrap break-words">
                     {assembledPrompt || (
-                        <span style={{ color: "var(--text-muted)" }}>
+                        <span className="text-tx-muted">
                             Fill in the variations on the left to see the assembled prompt here.
                         </span>
                     )}
@@ -234,24 +164,18 @@ export default function InpaintingMode({ onCopy, onApply }) {
 
                 {assembledNegative && (
                     <div>
-                        <p className="text-xs mb-1" style={{ color: "#ef4444" }}>Negative:</p>
-                        <div
-                            className="rounded p-3 text-xs font-mono"
-                            style={{ backgroundColor: "var(--bg)", border: "1px solid #fca5a5", color: "var(--text-dim)" }}
-                        >
+                        <p className="text-xs mb-1 text-danger">Negative:</p>
+                        <div className="rounded p-3 text-xs font-mono bg-bg border border-danger/40 text-tx-dim">
                             {assembledNegative}
                         </div>
                     </div>
                 )}
                 {/* Rules reminder */}
-                <div
-                    className="rounded p-3 text-xs flex flex-col gap-1"
-                    style={{ backgroundColor: "var(--accent-dim)", border: "1px solid var(--accent)" }}
-                >
-                    <p className="font-semibold" style={{ color: "var(--accent-text)" }}>Inpainting rules</p>
-                    <p style={{ color: "var(--text-dim)" }}>· Only describe the masked region, no age, style, background</p>
-                    <p style={{ color: "var(--text-dim)" }}>· Repeat the feature 2 - 3x in different phrasings</p>
-                    <p style={{ color: "var(--text-dim)" }}>· BREAK is optional</p>
+                <div className="rounded p-3 text-xs flex flex-col gap-1 bg-accent-dim border border-accent">
+                    <p className="font-semibold text-accent-fg">Inpainting rules</p>
+                    <p className="text-tx-dim">· Only describe the masked region, no age, style, background</p>
+                    <p className="text-tx-dim">· Repeat the feature 2 - 3x in different phrasings</p>
+                    <p className="text-tx-dim">· BREAK is optional</p>
                 </div>
 
                 <div className="flex gap-2 w-full">
@@ -265,20 +189,7 @@ export default function InpaintingMode({ onCopy, onApply }) {
                     <button
                         onClick={() => onApply?.(assembledPrompt, assembledNegative)}
                         disabled={!assembledPrompt}
-                        className="flex-1 py-2.5 rounded text-sm font-semibold uppercase tracking-wider transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                        style={{ backgroundColor: "var(--accent-dim)", color: "var(--accent-text)", border: "1px solid var(--accent)" }}
-                        onMouseEnter={(e) => {
-                            if (assembledPrompt) {
-                                e.currentTarget.style.backgroundColor = "var(--accent)";
-                                e.currentTarget.style.color = "var(--generate-text)";
-                            }
-                        }}
-                        onMouseLeave={(e) => {
-                            if (assembledPrompt) {
-                                e.currentTarget.style.backgroundColor = "var(--accent-dim)";
-                                e.currentTarget.style.color = "var(--accent-text)";
-                            }
-                        }}
+                        className="flex-1 py-2.5 rounded text-sm font-semibold uppercase tracking-wider btn-apply disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                         Apply Prompt
                     </button>

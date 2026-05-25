@@ -1,6 +1,4 @@
-/* Replace your current @import */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
 
 @tailwind base;
 @tailwind components;
@@ -9,15 +7,19 @@
 /* ── Base tokens ── */
 :root {
     --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-    /* swap in your pick */
     --bg: #f4f4f5;
     --bg-surface: #ffffff;
     --bg-raised: #e4e4e7;
+    --bg-subtle: rgba(0, 0, 0, 0.03);
     --border: #d4d4d8;
     --border-dim: #e4e4e7;
     --text: #18181b;
     --text-dim: #52525b;
     --text-muted: #757589;
+    --color-danger: #ef4444;
+    --color-danger-soft: #f87171;
+    --color-warning: #d97706;
+    --overlay-bg: rgba(0, 0, 0, 0.15);
 }
 
 /* ── Colored theme ── */
@@ -56,6 +58,8 @@
 
 * {
     box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
 }
 
 html,
@@ -67,6 +71,7 @@ body,
     font-family: var(--font-sans);
 }
 
+/* Scrollbars (WebKit) */
 ::-webkit-scrollbar {
     width: 4px;
 }
@@ -84,11 +89,27 @@ body,
     background: var(--text-muted);
 }
 
+/* Spinner*/
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
+    border: 2px solid var(--border-dim);
+    border-top-color: var(--text);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Composite image */
 .composite-image {
     filter: var(--composite-filter);
     transition: filter 0.3s ease;
 }
 
+/* Generate button */
 .btn-generate {
     background-color: var(--generate-bg);
     color: var(--generate-text);
@@ -104,6 +125,82 @@ body,
     cursor: not-allowed;
 }
 
+/* Prompt button (accent-dim → accent on hover) */
+.btn-prompt {
+    background-color: var(--accent-dim);
+    color: var(--accent-text);
+    border: 1px solid var(--accent);
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-prompt:hover {
+    background-color: var(--accent);
+    color: var(--generate-text);
+}
+
+/* Apply prompt button (same as btn-prompt but disabled-aware) */
+.btn-apply {
+    background-color: var(--accent-dim);
+    color: var(--accent-text);
+    border: 1px solid var(--accent);
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-apply:hover:not(:disabled) {
+    background-color: var(--accent);
+    color: var(--generate-text);
+}
+
+/*  Inpaint selection button (state-driven) */
+.btn-inpaint {
+    border: 1px solid var(--accent);
+    color: var(--accent-text);
+    background-color: transparent;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-inpaint.has-mask:not(:disabled) {
+    background-color: var(--accent);
+    color: var(--generate-text);
+}
+
+/* Add variation / add tag dashed buttons  */
+.btn-dashed {
+    border: 1px dashed var(--border);
+    color: var(--text-muted);
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-dashed:hover {
+    border-color: var(--accent);
+    color: var(--accent-text);
+}
+
+.btn-dashed-danger:hover {
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+}
+
+/*  Suggestion chip (tag toggle)  */
+.chip-suggestion {
+    background-color: var(--bg-raised);
+    border: 1px solid var(--border-dim);
+    color: var(--text-muted);
+    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+
+.chip-suggestion:hover {
+    border-color: var(--accent);
+    color: var(--accent-text);
+}
+
+.chip-suggestion.is-active {
+    background-color: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent-text);
+}
+
+/* Tooltip */
 .tooltip-wrap {
     position: relative;
     display: inline-flex;
@@ -136,6 +233,45 @@ body,
     opacity: 1;
 }
 
+.tooltip-right .tooltip-box {
+    top: 50%;
+    left: calc(100% + 8px);
+    bottom: auto;
+    transform: translateY(-50%);
+}
+
+/*  Tooltip help button (the ? circle)  */
+.tooltip-help-btn {
+    color: var(--text-muted);
+    border-color: var(--border);
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.tooltip-help-btn:hover {
+    color: var(--text);
+    border-color: var(--text-dim);
+}
+
+/* Value readout badge */
+.value-readout {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-dim);
+    color: var(--accent-text);
+}
+
+/*  Metadata chip (seed, steps, cfg, res)  */
+.metadata-chip {
+    background-color: var(--bg-raised);
+    border: 1px solid var(--border-dim);
+}
+
+/*  Metadata time chip variant (uses status-up color) */
+.metadata-chip-time {
+    border: 2px solid var(--status-up);
+    color: var(--status-up);
+}
+
+/* Scanlines effect */
 .scanlines {
     position: relative;
 }
@@ -144,18 +280,15 @@ body,
     content: '';
     position: absolute;
     inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.015) 2px, rgba(0, 0, 0, 0.015) 4px);
+    background: repeating-linear-gradient(0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.015) 2px,
+            rgba(0, 0, 0, 0.015) 4px);
     pointer-events: none;
 }
 
-.tooltip-right .tooltip-box {
-    top: 50%;
-    left: calc(100% + 8px);
-    bottom: auto;
-    transform: translateY(-50%);
-}
-
-/* ── Custom Range Sliders ── */
+/*  Custom Range Sliders */
 input[type=range] {
     -webkit-appearance: none;
     appearance: none;

@@ -69,15 +69,7 @@ export default function ParameterControl({ value, onChange, disabled = false }) 
                     onChange={(e) => update("prompt", e.target.value)}
                     disabled={disabled}
                     placeholder="describe the subject..."
-                    className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none disabled:opacity-40"
-                    style={{
-                        backgroundColor: "var(--bg-raised)",
-                        border: "1px solid var(--border)",
-                        color: "var(--text)",
-                        height: "100px",
-                    }}
-                    onFocus={(e) => e.target.style.borderColor = "var(--accent)"}
-                    onBlur={(e) => e.target.style.borderColor = "var(--border)"}
+                    className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none disabled:opacity-40 bg-raised border border-bd text-tx focus:border-accent h-[100px] transition-colors"
                 />
             </Field>
 
@@ -88,14 +80,7 @@ export default function ParameterControl({ value, onChange, disabled = false }) 
                     onChange={(e) => update("negative_prompt", e.target.value)}
                     disabled={disabled}
                     placeholder="what to avoid..."
-                    className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none disabled:opacity-40"
-                    style={{
-                        backgroundColor: "var(--bg-raised)",
-                        border: "1px solid var(--border)",
-                        color: "var(--text)",
-                    }}
-                    onFocus={(e) => e.target.style.borderColor = "var(--accent)"}
-                    onBlur={(e) => e.target.style.borderColor = "var(--border)"}
+                    className="w-full rounded px-2 py-1.5 text-xs resize-none focus:outline-none disabled:opacity-40 bg-raised border border-bd text-tx focus:border-accent transition-colors"
                 />
             </Field>
 
@@ -143,14 +128,7 @@ export default function ParameterControl({ value, onChange, disabled = false }) 
                         value={params.seed}
                         onChange={(e) => update("seed", Number(e.target.value))}
                         disabled={disabled}
-                        className="min-w-0 w-full rounded px-2 py-1.5 text-xs focus:outline-none disabled:opacity-40"
-                        style={{
-                            backgroundColor: "var(--bg-raised)",
-                            border: "1px solid var(--border)",
-                            color: "var(--text)",
-                        }}
-                        onFocus={(e) => e.target.style.borderColor = "var(--accent)"}
-                        onBlur={(e) => e.target.style.borderColor = "var(--border)"}
+                        className="min-w-0 w-full rounded px-2 py-1.5 text-xs focus:outline-none disabled:opacity-40 bg-raised border border-bd text-tx focus:border-accent transition-colors"
                     />
                     <IconButton onClick={randomizeSeed} disabled={disabled} title="randomize seed">↺</IconButton>
                     <IconButton onClick={() => update("seed", -1)} disabled={disabled} title="set to -1 (random)">−1</IconButton>
@@ -161,10 +139,7 @@ export default function ParameterControl({ value, onChange, disabled = false }) 
             <button
                 onClick={() => { onChange?.(DEFAULTS); }}
                 disabled={disabled}
-                className="text-xs text-left transition-colors disabled:opacity-30"
-                style={{ color: "var(--text-muted)" }}
-                onMouseEnter={(e) => e.target.style.color = "#f87171"}
-                onMouseLeave={(e) => e.target.style.color = "var(--text-muted)"}
+                className="text-xs text-left transition-colors disabled:opacity-30 text-tx-muted hover:text-danger-soft"
             >
                 ↺ reset parameters
             </button>
@@ -176,7 +151,7 @@ export default function ParameterControl({ value, onChange, disabled = false }) 
 function SectionLabel({ children }) {
     return (
         <div className="flex items-center justify-center mb-1 mt-1">
-            <span className="text-sm uppercase tracking-[0.2em] font-semibold" style={{ color: "var(--text-dim)" }}>
+            <span className="text-sm uppercase tracking-[0.2em] font-semibold text-tx-dim">
                 {children}
             </span>
         </div>
@@ -188,46 +163,22 @@ function Field({ label, tooltip, valueReadout, children }) {
         <div className="flex flex-col min-w-0 gap-2">
             <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-1.5 min-w-0">
-                    <label className="text-xs uppercase tracking-wider font-medium truncate" style={{ color: "var(--text-dim)" }}>
+                    <label className="text-xs uppercase tracking-wider font-medium truncate text-tx-dim">
                         {label}
                     </label>
                     {tooltip && (
                         <div className="tooltip-wrap relative shrink-0">
-                            <span
-                                className="flex items-center justify-center text-[9px] font-bold w-[16px] h-[16px] rounded-full border cursor-help transition-colors"
-                                style={{
-                                    color: "var(--text-muted)",
-                                    borderColor: "var(--border)",
-                                }}
-                                onMouseEnter={(e) => { e.target.style.color = "var(--text)"; e.target.style.borderColor = "var(--text-dim)"; }}
-                                onMouseLeave={(e) => { e.target.style.color = "var(--text-muted)"; e.target.style.borderColor = "var(--border)"; }}
-                            >
+                            <span className="flex items-center justify-center text-[9px] font-bold w-[16px] h-[16px] rounded-full border cursor-help tooltip-help-btn">
                                 ?
                             </span>
-                            <span
-                                className="tooltip-box"
-                                style={{
-                                    maxWidth: "200px",
-                                    whiteSpace: "normal",
-                                    textAlign: "left",
-                                    left: "0",
-                                    zIndex: 50
-                                }}
-                            >
+                            <span className="tooltip-box">
                                 {tooltip}
                             </span>
                         </div>
                     )}
                 </div>
                 {valueReadout && (
-                    <span
-                        className="text-[11px] font-mono px-1.5 py-0.5 rounded shadow-sm border"
-                        style={{
-                            backgroundColor: "var(--bg-surface)",
-                            borderColor: "var(--border-dim)",
-                            color: "var(--accent-text)"
-                        }}
-                    >
+                    <span className="value-readout text-[11px] font-mono px-1.5 py-0.5 rounded shadow-sm">
                         {valueReadout}
                     </span>
                 )}
@@ -243,12 +194,7 @@ function Select({ value, onChange, disabled, children }) {
             value={value}
             onChange={onChange}
             disabled={disabled}
-            className="w-full rounded px-2 py-1.5 text-xs focus:outline-none disabled:opacity-40"
-            style={{
-                backgroundColor: "var(--bg-raised)",
-                border: "1px solid var(--border)",
-                color: "var(--text)",
-            }}
+            className="w-full rounded px-2 py-1.5 text-xs focus:outline-none disabled:opacity-40 bg-raised border border-bd text-tx focus:border-accent transition-colors"
         >
             {children}
         </select>
@@ -261,14 +207,7 @@ function IconButton({ onClick, disabled, title, children }) {
             onClick={onClick}
             disabled={disabled}
             title={title}
-            className="px-2 rounded text-xs transition-colors disabled:opacity-40"
-            style={{
-                backgroundColor: "var(--bg-raised)",
-                border: "1px solid var(--border)",
-                color: "var(--text-dim)",
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.borderColor = "var(--accent)"}
-            onMouseLeave={(e) => e.currentTarget.style.borderColor = "var(--border)"}
+            className="px-2 rounded text-xs transition-colors disabled:opacity-40 bg-raised border border-bd text-tx-dim hover:border-accent"
         >
             {children}
         </button>

@@ -136,22 +136,19 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
         <div className="flex flex-col gap-2">
 
             {/* Toolbar */}
-            <div
-                className="flex items-center gap-3 px-2 py-1.5 rounded text-xs"
-                style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-dim)" }}
-            >
+            <div className="flex items-center gap-3 px-2 py-1.5 rounded text-xs bg-surface border border-dim">
                 {/* Tool toggle */}
-                <div className="flex rounded overflow-hidden" style={{ border: "1px solid var(--border)" }}>
+                <div className="flex rounded overflow-hidden border border-bd">
                     {["paint", "erase"].map((t) => (
                         <button
                             key={t}
                             onClick={() => setTool(t)}
                             disabled={disabled}
-                            className="px-3 py-1 text-xs transition-colors disabled:opacity-40"
-                            style={{
-                                backgroundColor: tool === t ? "var(--accent)" : "var(--bg-raised)",
-                                color: tool === t ? "var(--generate-text)" : "var(--text-dim)",
-                            }}
+                            className={`px-3 py-1 text-xs transition-colors disabled:opacity-40 ${
+                                tool === t
+                                    ? "bg-accent text-gen-fg"
+                                    : "bg-raised text-tx-dim hover:text-tx"
+                            }`}
                         >
                             {t}
                         </button>
@@ -160,7 +157,7 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
 
                 {/* Brush size */}
                 <div className="flex items-center gap-2 flex-1">
-                    <span style={{ color: "var(--text-muted)" }}>brush</span>
+                    <span className="text-tx-muted">brush</span>
                     <input
                         type="range" min={MIN_BRUSH} max={MAX_BRUSH}
                         value={brushSize}
@@ -169,17 +166,18 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
                         className="flex-1 disabled:opacity-40"
                         style={{ accentColor: "var(--accent)" }}
                     />
-                    <span className="w-6 text-right" style={{ color: "var(--text-dim)" }}>{brushSize}</span>
+                    <span className="w-6 text-right text-tx-dim">{brushSize}</span>
                 </div>
 
                 {/* Filters */}
                 <button
                     onClick={() => setIsGrayscale((prev) => !prev)}
                     disabled={!imageData || disabled}
-                    className="text-xs transition-colors disabled:opacity-30 w-10 text-center"
-                    style={{ color: isGrayscale ? "var(--accent)" : "var(--text-muted)" }}
-                    onMouseEnter={(e) => { if (!isGrayscale) e.target.style.color = "var(--text)"; }}
-                    onMouseLeave={(e) => { if (!isGrayscale) e.target.style.color = "var(--text-muted)"; }}
+                    className={`text-xs transition-colors disabled:opacity-30 w-10 text-center ${
+                        isGrayscale
+                            ? "text-accent-fg font-semibold"
+                            : "text-tx-muted hover:text-tx"
+                    }`}
                 >
                     {isGrayscale ? "color" : "gray"}
                 </button>
@@ -187,10 +185,7 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
                 <button
                     onClick={clearMask}
                     disabled={disabled || !hasMask}
-                    className="text-xs transition-colors disabled:opacity-30"
-                    style={{ color: "var(--text-muted)" }}
-                    onMouseEnter={(e) => e.target.style.color = "#ef4444"}
-                    onMouseLeave={(e) => e.target.style.color = "var(--text-muted)"}
+                    className="text-xs transition-colors disabled:opacity-30 text-tx-muted hover:text-danger"
                 >
                     clear
                 </button>
@@ -198,10 +193,7 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
                 <button
                     onClick={handleExport}
                     disabled={!imageData || disabled}
-                    className="text-xs transition-colors disabled:opacity-30"
-                    style={{ color: "var(--text-muted)" }}
-                    onMouseEnter={(e) => e.target.style.color = "var(--text)"}
-                    onMouseLeave={(e) => e.target.style.color = "var(--text-muted)"}
+                    className="text-xs transition-colors disabled:opacity-30 text-tx-muted hover:text-tx"
                 >
                     export
                 </button>
@@ -209,13 +201,8 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
 
             {/* Stage */}
             <div
-                className="rounded overflow-hidden scanlines"
-                style={{
-                    cursor,
-                    width: CANVAS_SIZE,
-                    height: CANVAS_SIZE,
-                    border: "1px solid var(--border)",
-                }}
+                className="rounded overflow-hidden scanlines border border-bd w-[512px] h-[512px]"
+                style={{ cursor }}
             >
                 <Stage
                     ref={stageRef}
@@ -225,37 +212,15 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
                     onMouseMove={handleMouseMove}
                     onMouseUp={handleMouseUp}
                     onMouseLeave={handleMouseUp}
-                    style={{ background: "#f4f4f5" }}
+                    className="bg-bg"
                 >
-                    <Layer ref={imageLayerRef}>
-                        {konvaImage ? (
-                            <KonvaImage
-                                ref={mainImageRef}
-                                image={konvaImage}
-                                width={CANVAS_SIZE}
-                                height={CANVAS_SIZE}
-                                filters={isGrayscale ? [Konva.Filters.Grayscale] : []}
-                            />
-                        ) : (
-                            <Rect width={CANVAS_SIZE} height={CANVAS_SIZE} fill="#e4e4e7" />
-                        )}
-                    </Layer>
-
-                    <Layer>
-                        <Rect width={CANVAS_SIZE} height={CANVAS_SIZE} fill="transparent" />
-                        {lines.map((line, i) => (
-                            <Line
-                                key={i}
-                                points={line.points}
-                                stroke={line.tool === "paint" ? "rgba(86,37,126,0.5)" : "rgba(244,244,245,0.9)"}
-                                strokeWidth={line.brushSize}
-                                tension={0.4}
-                                lineCap="round"
-                                lineJoin="round"
-                                globalCompositeOperation={line.tool === "erase" ? "destination-out" : "source-over"}
-                            />
-                        ))}
-                    </Layer>
+                    <StageRefHack
+                        imageLayerRef={imageLayerRef}
+                        mainImageRef={mainImageRef}
+                        konvaImage={konvaImage}
+                        isGrayscale={isGrayscale}
+                        lines={lines}
+                    />
                 </Stage>
             </div>
 
@@ -264,22 +229,54 @@ export default function CompositeCanvas({ imageData, onInpaint, disabled = false
                 <button
                     onClick={handleInpaintSubmit}
                     disabled={disabled || !hasMask}
-                    className="w-full py-2 rounded text-xs transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                    style={{
-                        border: "1px solid var(--accent)",
-                        color: hasMask && !disabled ? "var(--generate-text)" : "var(--accent-text)",
-                        backgroundColor: hasMask && !disabled ? "var(--accent)" : "transparent",
-                    }}
+                    className={`w-full py-2 rounded text-xs transition-colors btn-inpaint ${hasMask && !disabled ? "has-mask" : ""}`}
                 >
                     {disabled ? "generating..." : hasMask ? "inpaint selection" : "draw a mask first"}
                 </button>
             )}
 
             {!imageData && (
-                <p className="text-xs text-center" style={{ color: "var(--text-muted)" }}>
+                <p className="text-xs text-center text-tx-muted">
                     generate an image first to enable inpainting
                 </p>
             )}
         </div>
+    );
+}
+
+// Stage contains only layers as direct children, this is helper component to comply with react-konva rules
+function StageRefHack({ imageLayerRef, mainImageRef, konvaImage, isGrayscale, lines }) {
+    return (
+        <>
+            <Layer ref={imageLayerRef}>
+                {konvaImage ? (
+                    <KonvaImage
+                        ref={mainImageRef}
+                        image={konvaImage}
+                        width={CANVAS_SIZE}
+                        height={CANVAS_SIZE}
+                        filters={isGrayscale ? [Konva.Filters.Grayscale] : []}
+                    />
+                ) : (
+                    <Rect width={CANVAS_SIZE} height={CANVAS_SIZE} fill="#e4e4e7" />
+                )}
+            </Layer>
+
+            <Layer>
+                <Rect width={CANVAS_SIZE} height={CANVAS_SIZE} fill="transparent" />
+                {lines.map((line, i) => (
+                    <Line
+                        key={i}
+                        points={line.points}
+                        stroke={line.tool === "paint" ? "rgba(86,37,126,0.5)" : "rgba(244,244,245,0.9)"}
+                        strokeWidth={line.brushSize}
+                        tension={0.4}
+                        lineCap="round"
+                        lineJoin="round"
+                        globalCompositeOperation={line.tool === "erase" ? "destination-out" : "source-over"}
+                    />
+                ))}
+            </Layer>
+        </>
     );
 }

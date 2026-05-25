@@ -25,17 +25,10 @@ export default function InpaintParameters({ onChange, disabled = false }) {
             {/* Denoising Strength */}
             <div className="flex flex-col gap-1">
                 <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs uppercase tracking-wider font-medium" style={{ color: "var(--text-dim)" }}>
+                    <label className="text-xs uppercase tracking-wider font-medium text-tx-dim">
                         Denoising
                     </label>
-                    <span 
-                        className="text-[11px] font-mono px-1.5 py-0.5 rounded shadow-sm border" 
-                        style={{ 
-                            backgroundColor: "var(--bg-surface)", 
-                            borderColor: "var(--border-dim)", 
-                            color: "var(--accent-text)" 
-                        }}
-                    >
+                    <span className="value-readout text-[11px] font-mono px-1.5 py-0.5 rounded shadow-sm">
                         {params.denoising_strength.toFixed(2)}
                     </span>
                 </div>
@@ -46,23 +39,16 @@ export default function InpaintParameters({ onChange, disabled = false }) {
                     disabled={disabled}
                     className="w-full disabled:opacity-40"
                 />
-                <p style={{ color: "var(--text-muted)" }}>{denoisingHint}</p>
+                <p className="text-tx-muted">{denoisingHint}</p>
             </div>
 
             {/* Mask Blur */}
             <div className="flex flex-col gap-1">
                 <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs uppercase tracking-wider font-medium" style={{ color: "var(--text-dim)" }}>
+                    <label className="text-xs uppercase tracking-wider font-medium text-tx-dim">
                         Mask Blur
                     </label>
-                    <span 
-                        className="text-[11px] font-mono px-1.5 py-0.5 rounded shadow-sm border" 
-                        style={{ 
-                            backgroundColor: "var(--bg-surface)", 
-                            borderColor: "var(--border-dim)", 
-                            color: "var(--accent-text)" 
-                        }}
-                    >
+                    <span className="value-readout text-[11px] font-mono px-1.5 py-0.5 rounded shadow-sm">
                         {params.mask_blur}px
                     </span>
                 </div>
@@ -73,7 +59,7 @@ export default function InpaintParameters({ onChange, disabled = false }) {
                     disabled={disabled}
                     className="w-full disabled:opacity-40"
                 />
-                <p style={{ color: "var(--text-muted)" }}>softens mask edges to reduce seams</p>
+                <p className="text-tx-muted">softens mask edges to reduce seams</p>
             </div>
 
         </div>

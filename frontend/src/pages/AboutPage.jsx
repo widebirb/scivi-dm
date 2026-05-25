@@ -13,13 +13,13 @@ const TECH = [
 
 export default function AboutPage() {
     return (
-        <div className="flex-1 overflow-y-auto p-8" style={{ color: "var(--text)" }}>
+        <div className="flex-1 overflow-y-auto p-8 text-tx">
             <div className="max-w-2xl mx-auto flex flex-col gap-10">
 
                 {/* System */}
                 <section>
                     <SectionTitle>SCIVI-DM</SectionTitle>
-                    <p className="text-sm leading-relaxed" style={{ color: "var(--text-dim)" }}>
+                    <p className="text-sm leading-relaxed text-tx-dim">
                         uhm
                     </p>
                 </section>
@@ -31,11 +31,10 @@ export default function AboutPage() {
                         {TECH.map((t) => (
                             <div
                                 key={t.name}
-                                className="flex items-center justify-between py-1.5 px-2 rounded text-xs"
-                                style={{ borderBottom: "1px solid var(--border-dim)" }}
+                                className="flex items-center justify-between py-1.5 px-2 rounded text-xs border-b border-dim"
                             >
-                                <span style={{ color: "var(--accent-text)" }}>{t.name}</span>
-                                <span style={{ color: "var(--text-muted)" }}>{t.role}</span>
+                                <span className="text-accent-fg">{t.name}</span>
+                                <span className="text-tx-muted">{t.role}</span>
                             </div>
                         ))}
                     </div>
@@ -44,7 +43,7 @@ export default function AboutPage() {
                 {/* Acknowledgements */}
                 <section>
                     <SectionTitle>Acknowledgements</SectionTitle>
-                    <p className="text-sm leading-relaxed" style={{ color: "var(--text-dim)" }}>
+                    <p className="text-sm leading-relaxed text-tx-dim">
                         what do I put here
                     </p>
                 </section>
@@ -52,7 +51,7 @@ export default function AboutPage() {
                 {/* License */}
                 <section>
                     <SectionTitle>License</SectionTitle>
-                    <p className="text-sm" style={{ color: "var(--text-dim)" }}>
+                    <p className="text-sm text-tx-dim">
                         don't know yet
                     </p>
                 </section>
@@ -64,13 +63,7 @@ export default function AboutPage() {
 
 function SectionTitle({ children }) {
     return (
-        <h2
-            className="text-xs uppercase tracking-[0.2em] mb-3 pb-2"
-            style={{
-                color: "var(--accent-text)",
-                borderBottom: "1px solid var(--border-dim)",
-            }}
-        >
+        <h2 className="text-xs uppercase tracking-[0.2em] mb-3 pb-2 text-accent-fg border-b border-dim">
             {children}
         </h2>
     );
